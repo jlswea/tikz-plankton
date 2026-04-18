@@ -15,41 +15,41 @@
 \begin{scope}
 
   % Property boundary
-  \floorproperty{(-2,-2) -- (14,-2) -- (14,10) -- (-2,10) -- (-2,-2)}
+  \planproperty{(-2,-2) -- (14,-2) -- (14,10) -- (-2,10) -- (-2,-2)}
 
   % Lawn areas
-  \floorlawn{(-1.5,-1.5) -- (13.5,-1.5) -- (13.5,9.5) -- (-1.5,9.5)}
+  \planlawn{(-1.5,-1.5) -- (13.5,-1.5) -- (13.5,9.5) -- (-1.5,9.5)}
 
   % Driveway
-  \floordriveway{9,-1.5}{3}{2}
+  \plandriveway{9,-1.5}{3}{2}
 
   % Front walkway
-  \floorpathwalk{(5,0) -- (5,-1.5)}
+  \planpathwalk{(5,0) -- (5,-1.5)}
 
   % Back patio
-  \floorpatio[material=wood]{0,8}{4}{1.5}
+  \planpatio[material=wood]{0,8}{4}{1.5}
 
   % Trees
-  \floortree{-1,9}{0.6}
-  \floortree[type=coniferous]{13,9}{0.5}
-  \floortree{12,-1}{0.5}
+  \plantree{-1,9}{0.6}
+  \plantree[type=coniferous]{13,9}{0.5}
+  \plantree{12,-1}{0.5}
 
   % Shrubs along front
-  \floorshrub{1,-0.3}{0.2}
-  \floorshrub{3,-0.3}{0.2}
-  \floorshrub{7,-0.3}{0.2}
+  \planshrub{1,-0.3}{0.2}
+  \planshrub{3,-0.3}{0.2}
+  \planshrub{7,-0.3}{0.2}
 
   % Garden bed
-  \floorgardenbed{(-1.5,3) -- (-0.5,3) -- (-0.5,7) -- (-1.5,7)}
+  \plangardenbed{(-1.5,3) -- (-0.5,3) -- (-0.5,7) -- (-1.5,7)}
 
   % Fence
-  \floorfence[type=wood]{-1.5,0}{-1.5,9.5}
-  \floorfence[type=wood]{-1.5,9.5}{13.5,9.5}
-  \floorfence[type=wood]{13.5,0}{13.5,9.5}
+  \planfence[type=wood]{-1.5,0}{-1.5,9.5}
+  \planfence[type=wood]{-1.5,9.5}{13.5,9.5}
+  \planfence[type=wood]{13.5,0}{13.5,9.5}
 
   % Utility lines
-  \floorsiteutility[type=water]{(-2,4) -- (0,4)}
-  \floorsiteutility[type=gas]{(-2,3) -- (0,3)}
+  \plansiteutility[type=water]{(-2,4) -- (0,4)}
+  \plansiteutility[type=gas]{(-2,3) -- (0,3)}
 
 \end{scope}
 
@@ -59,41 +59,41 @@
 \begin{scope}
 
   % Outer walls
-  \floorwallpath[closed=true]{(0,0) -- (12,0) -- (12,8) -- (0,8)}
+  \planwallpath[closed=true]{(0,0) -- (12,0) -- (12,8) -- (0,8)}
 
   % Interior walls
-  \floorwall{5,0}{5,5.5}       % Living/bedroom divider
-  \floorwall{5,5.5}{12,5.5}    % Bedroom corridor / upper divider
-  \floorwall{8,5.5}{8,8}       % Kitchen/bathroom divider
-  \floorwall{5,3}{0,3}         % Living/study divider
+  \planwall{5,0}{5,5.5}       % Living/bedroom divider
+  \planwall{5,5.5}{12,5.5}    % Bedroom corridor / upper divider
+  \planwall{8,5.5}{8,8}       % Kitchen/bathroom divider
+  \planwall{5,3}{0,3}         % Living/study divider
 
   % Doors
-  \floordoor{5,1}{0}                          % Bedroom door
-  \floordoor[hinge=right]{5.2,5.5}{90}        % Hallway door
-  \floordoor{8.2,5.5}{0}                      % Bathroom door
-  \floordoor[width=1.2]{3,0}{0}               % Front door
-  \floordoor{0.2,3}{90}                       % Study door
+  \plandoor{5,1}{0}                          % Bedroom door
+  \plandoor[hinge=right]{5.2,5.5}{90}        % Hallway door
+  \plandoor{8.2,5.5}{0}                      % Bathroom door
+  \plandoor[width=1.2]{3,0}{0}               % Front door
+  \plandoor{0.2,3}{90}                       % Study door
 
   % Windows (US: triple parallel lines)
-  \floorwindow{6,0}{8,0}      % Bedroom window
-  \floorwindow{1,8}{3,8}      % Kitchen window
-  \floorwindow{12,1}{12,3}    % Bedroom side window
-  \floorwindow{9,8}{11,8}     % Bathroom window
-  \floorwindow{0,4.5}{0,6.5}  % Living room window
+  \planwindow{6,0}{8,0}      % Bedroom window
+  \planwindow{1,8}{3,8}      % Kitchen window
+  \planwindow{12,1}{12,3}    % Bedroom side window
+  \planwindow{9,8}{11,8}     % Bathroom window
+  \planwindow{0,4.5}{0,6.5}  % Living room window
 
   % Room labels
-  \floorlabel{2.5,5.5}{Living Room}
-  \floorlabel{8.5,3}{Bedroom}
-  \floorlabel{4,6.5}{Kitchen}
-  \floorlabel{10,7}{Bathroom}
-  \floorlabel{2.5,1.5}{Study}
+  \planlabel{2.5,5.5}{Living Room}
+  \planlabel{8.5,3}{Bedroom}
+  \planlabel{4,6.5}{Kitchen}
+  \planlabel{10,7}{Bathroom}
+  \planlabel{2.5,1.5}{Study}
 
   % Dimensions (US: arrowheads, feet-inches labels)
-  \floordimension[offset=-0.7]{0,0}{12,0}
-  \floordimension[offset=-0.7]{12,0}{12,8}
+  \plandimension[offset=-0.7]{0,0}{12,0}
+  \plandimension[offset=-0.7]{12,0}{12,8}
 
   % Scale indicator
-  \floorscale{0,-1.5}
+  \planscale{0,-1.5}
 
 \end{scope}
 
@@ -103,37 +103,37 @@
 \begin{scope}
 
   % Living room
-  \flooroutlet{0.2,4}{0}
-  \flooroutlet{0.2,6}{0}
-  \floorlight{2.5,5}{0}
-  \floorswitch{4.8,3.3}{0}
+  \planoutlet{0.2,4}{0}
+  \planoutlet{0.2,6}{0}
+  \planlight{2.5,5}{0}
+  \planswitch{4.8,3.3}{0}
 
   % Study
-  \flooroutlet{0.2,1}{0}
-  \flooroutlet{4.8,1}{180}
-  \floorlight{2.5,1.5}{0}
-  \floorswitch{0.4,3.2}{0}
+  \planoutlet{0.2,1}{0}
+  \planoutlet{4.8,1}{180}
+  \planlight{2.5,1.5}{0}
+  \planswitch{0.4,3.2}{0}
 
   % Bedroom
-  \flooroutlet{11.8,0.3}{180}
-  \flooroutlet{5.2,0.3}{0}
-  \floorlight{8.5,2.5}{0}
-  \floorswitch{5.2,1.2}{0}
+  \planoutlet{11.8,0.3}{180}
+  \planoutlet{5.2,0.3}{0}
+  \planlight{8.5,2.5}{0}
+  \planswitch{5.2,1.2}{0}
 
   % Kitchen
-  \floorlight{4,7}{0}
-  \flooroutlet{0.2,7.5}{0}
-  \floorswitch{4.8,5.8}{0}
+  \planlight{4,7}{0}
+  \planoutlet{0.2,7.5}{0}
+  \planswitch{4.8,5.8}{0}
 
   % Bathroom
-  \floorlight{10,7}{0}
-  \floorswitch{8.2,5.8}{0}
+  \planlight{10,7}{0}
+  \planswitch{8.2,5.8}{0}
 
   % Panel (US: "EP" label)
-  \floorpanel{11.5,5.2}{0}
+  \planpanel{11.5,5.2}{0}
 
   % Wiring
-  \floorwire{(11.5,5.2) -- (11.5,5.5)}
+  \planwire{(11.5,5.2) -- (11.5,5.5)}
 
 \end{scope}
 
@@ -143,25 +143,25 @@
 \begin{scope}
 
   % Kitchen
-  \floorsink[type=kitchen]{2,7.8}{180}
+  \plansink[type=kitchen]{2,7.8}{180}
 
   % Bathroom
-  \floortoilet{11.5,6}{0}
-  \floorsink{9,7.8}{180}
-  \floortub{8.2,5.7}{0.7}{1.8}
-  \floorshower{10.5,5.7}{1.0}
+  \plantoilet{11.5,6}{0}
+  \plansink{9,7.8}{180}
+  \plantub{8.2,5.7}{0.7}{1.8}
+  \planshower{10.5,5.7}{1.0}
 
   % Supply lines (US: dashed)
-  \floorsupplyline[type=cold]{(2,8) -- (2,7.5)}
-  \floorsupplyline[type=hot]{(2.3,8) -- (2.3,7.5)}
-  \floorsupplyline[type=cold]{(9,8) -- (9,7.5)}
+  \plansupplyline[type=cold]{(2,8) -- (2,7.5)}
+  \plansupplyline[type=hot]{(2.3,8) -- (2.3,7.5)}
+  \plansupplyline[type=cold]{(9,8) -- (9,7.5)}
 
   % Drain lines
-  \floordrainline{(2,7.5) -- (2,5.5) -- (9,5.5)}
-  \floordrainline{(11.5,6) -- (11.5,5.5)}
+  \plandrainline{(2,7.5) -- (2,5.5) -- (9,5.5)}
+  \plandrainline{(11.5,6) -- (11.5,5.5)}
 
   % Shutoff valve (US: diamond)
-  \floorshutoff{0.3,4}
+  \planshutoff{0.3,4}
 
 \end{scope}
 
@@ -171,24 +171,24 @@
 \begin{scope}
 
   % Thermostat (US: "T" in circle)
-  \floorthermostat{4.7,4.5}{0}
+  \planthermostat{4.7,4.5}{0}
 
   % Supply diffusers
-  \floordiffuser[type=supply]{2.5,4.5}{0}     % Living room
-  \floordiffuser[type=supply]{8,2}{0}          % Bedroom
-  \floordiffuser[type=round]{4,7.5}{0}         % Kitchen
+  \plandiffuser[type=supply]{2.5,4.5}{0}     % Living room
+  \plandiffuser[type=supply]{8,2}{0}          % Bedroom
+  \plandiffuser[type=round]{4,7.5}{0}         % Kitchen
 
   % Return
-  \floordiffuser[type=return]{2.5,6.5}{0}      % Living room return
+  \plandiffuser[type=return]{2.5,6.5}{0}      % Living room return
 
   % Duct runs
-  \floorduct{(2.5,4.5) -- (2.5,5.5) -- (8,5.5) -- (8,2)}
+  \planduct{(2.5,4.5) -- (2.5,5.5) -- (8,5.5) -- (8,2)}
 
   % Exhaust fan in bathroom
-  \floorexhaust{10.5,7.5}{0}
+  \planexhaust{10.5,7.5}{0}
 
   % Mini-split in bedroom
-  \floorminisplit{8.5,0.2}{0}
+  \planminisplit{8.5,0.2}{0}
 
 \end{scope}
 
@@ -198,27 +198,27 @@
 \begin{scope}
 
   % Bedroom — double bed
-  \floorbed[type=double]{5.3,0.3}{0}
+  \planbed[type=double]{5.3,0.3}{0}
 
   % Study — desk and chair
-  \floordesk{1,0.3}{2.5}{0.8}
-  \floorchair{2,1.3}{0}
+  \plandesk{1,0.3}{2.5}{0.8}
+  \planchair{2,1.3}{0}
 
   % Living room — sofa and table
-  \floorsofa[seats=3]{0.2,4.5}{0}
-  \floortable[shape=round]{2.5,4}{0.8}{0.8}
+  \plansofa[seats=3]{0.2,4.5}{0}
+  \plantable[shape=round]{2.5,4}{0.8}{0.8}
 
   % Kitchen — stove and fridge
-  \floorstove{5.5,7.3}{0}
-  \floorfridge{6.3,7.3}{0}
+  \planstove{5.5,7.3}{0}
+  \planfridge{6.3,7.3}{0}
 
   % Bedroom — shelving
-  \floorshelving{11,0.3}{0.8}{2}
+  \planshelving{11,0.3}{0.8}{2}
 
   % Kitchen — table and chairs
-  \floortable{5.5,5.8}{1.5}{1}
-  \floorchair{5.8,5.5}{180}
-  \floorchair{6.5,5.5}{180}
+  \plantable{5.5,5.8}{1.5}{1}
+  \planchair{5.8,5.5}{180}
+  \planchair{6.5,5.5}{180}
 
 \end{scope}
 
