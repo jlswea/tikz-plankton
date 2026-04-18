@@ -1,0 +1,47 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fafafa;--fg:#1a1a2e;--card:#fff;--border:#e0e0e0;--accent:#2563eb;--accent-light:#dbeafe;--code-bg:#1e1e2e;--code-fg:#cdd6f4;--header-bg:#1a1a2e;--header-fg:#f0f0f5;--tag-bg:#e8eaf6;--tag-fg:#3949ab}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
+
+/* Header */
+header{background:var(--header-bg);color:var(--header-fg);padding:3rem 1.5rem;text-align:center}
+header h1{font-size:2.4rem;font-weight:700;letter-spacing:-.02em}
+header p.tagline{font-size:1.15rem;opacity:.85;margin-top:.4rem}
+nav{margin-top:1.2rem;display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+nav a{color:var(--accent-light);text-decoration:none;font-weight:500;font-size:.95rem}
+nav a:hover{text-decoration:underline}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{margin-bottom:3rem}
+section h2{font-size:1.5rem;margin-bottom:1rem;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+
+/* Card grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.card img{width:100%;height:auto;display:block;background:#f5f5f5;padding:.5rem}
+.card-body{padding:1rem}
+.card-body h3{font-size:1.05rem;margin-bottom:.3rem}
+.card-body p{font-size:.9rem;color:#555}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.tag{background:var(--tag-bg);color:var(--tag-fg);font-size:.75rem;padding:.15rem .5rem;border-radius:12px;font-weight:500}
+
+/* Packages table */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:.55rem .75rem;border-bottom:1px solid var(--border);font-size:.92rem}
+th{font-weight:600;background:#f5f5f5}
+code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.88em;background:#f0f0f0;padding:.1em .35em;border-radius:3px}
+
+/* Code block */
+pre{background:var(--code-bg);color:var(--code-fg);padding:1.2rem 1.5rem;border-radius:8px;overflow-x:auto;font-size:.88rem;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+
+/* Footer */
+footer{text-align:center;padding:2rem 1.5rem;font-size:.85rem;color:#777;border-top:1px solid var(--border)}
+footer a{color:var(--accent)}
+
+@media(max-width:600px){
+  header h1{font-size:1.8rem}
+  .grid{grid-template-columns:1fr}
+  pre{font-size:.8rem;padding:1rem}
+}

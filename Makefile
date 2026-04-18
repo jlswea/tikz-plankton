@@ -3,8 +3,9 @@ PACKAGES = plankton-base plankton-electrical plankton-plumbing \
 STY = $(addsuffix .sty,$(PACKAGES))
 EXAMPLES = $(wildcard examples/*.tex)
 EXAMPLE_PDFS = $(EXAMPLES:.tex=.pdf)
+EXAMPLE_SVGS = $(patsubst examples/%.tex,docs/img/%.svg,$(EXAMPLES))
 
-.PHONY: all sty doc examples ctan clean
+.PHONY: all sty doc examples svgs ctan clean
 
 all: sty doc examples
 
@@ -24,6 +25,11 @@ examples: $(EXAMPLE_PDFS)
 examples/%.pdf: examples/%.tex $(STY)
 	cd examples && TEXINPUTS=".:..:" pdflatex -interaction=nonstopmode \
 	  -halt-on-error $(<F)
+
+svgs: $(EXAMPLE_SVGS)
+docs/img/%.svg: examples/%.pdf
+	@mkdir -p docs/img
+	dvisvgm --pdf --no-fonts --exact-bbox --optimize=all --output=$@ $<
 
 ctan: sty doc
 	mkdir -p plankton/examples

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>plankton &mdash; TikZ macros for floor plans &amp; site plans</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>plankton</h1>
+  <p class="tagline">TikZ macros for architectural floor plans and site plans</p>
+  <nav>
+    <a href="#examples">Examples</a>
+    <a href="#packages">Packages</a>
+    <a href="#quickstart">Quick start</a>
+    <a href="https://github.com/jlswea/tikz-plankton">GitHub</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <section id="examples">
+    <h2>Examples</h2>
+    <div class="grid">
+
+      <div class="card">
+        <img src="img/apartment-base.svg" alt="Apartment base plan">
+        <div class="card-body">
+          <h3>Apartment &mdash; Base</h3>
+          <p>Walls, doors, windows, electrical outlets, and plumbing fixtures.</p>
+          <div class="tags">
+            <span class="tag">base</span>
+            <span class="tag">electrical</span>
+            <span class="tag">plumbing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="img/apartment-iec.svg" alt="Apartment IEC plan">
+        <div class="card-body">
+          <h3>Apartment &mdash; IEC/ISO</h3>
+          <p>All layers with IEC/ISO symbols, HVAC, and furniture.</p>
+          <div class="tags">
+            <span class="tag">IEC</span>
+            <span class="tag">HVAC</span>
+            <span class="tag">furniture</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="img/apartment-us.svg" alt="Apartment US plan">
+        <div class="card-body">
+          <h3>Apartment &mdash; US</h3>
+          <p>All layers with US symbols and imperial dimensions.</p>
+          <div class="tags">
+            <span class="tag">US</span>
+            <span class="tag">imperial</span>
+            <span class="tag">furniture</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="img/complete-iec.svg" alt="Complete house IEC plan">
+        <div class="card-body">
+          <h3>Full House &mdash; IEC/ISO</h3>
+          <p>Five-room house with site plan, all six packages, IEC/ISO symbols.</p>
+          <div class="tags">
+            <span class="tag">IEC</span>
+            <span class="tag">site</span>
+            <span class="tag">all layers</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="img/complete-us.svg" alt="Complete house US plan">
+        <div class="card-body">
+          <h3>Full House &mdash; US</h3>
+          <p>Five-room house with site plan, all six packages, US symbols.</p>
+          <div class="tags">
+            <span class="tag">US</span>
+            <span class="tag">site</span>
+            <span class="tag">all layers</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="img/site-plan.svg" alt="Site plan">
+        <div class="card-body">
+          <h3>Site Plan</h3>
+          <p>Trees, fences, pool, pond, walkways, utilities, and boundaries.</p>
+          <div class="tags">
+            <span class="tag">site</span>
+            <span class="tag">vegetation</span>
+            <span class="tag">utilities</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="packages">
+    <h2>Packages</h2>
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Purpose</th><th>Options</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>plankton-base</code></td><td>Walls, doors, windows, stairs, dimensions</td><td><code>units=metric|imperial</code></td></tr>
+        <tr><td><code>plankton-electrical</code></td><td>Outlets, switches, lights, panels, wiring</td><td><code>standard=iec|us</code></td></tr>
+        <tr><td><code>plankton-plumbing</code></td><td>Sinks, toilets, tubs, showers, supply/drain lines</td><td><code>standard=iso|us</code></td></tr>
+        <tr><td><code>plankton-hvac</code></td><td>Diffusers, ducts, thermostats, exhaust fans, dampers</td><td><code>standard=iec|us</code></td></tr>
+        <tr><td><code>plankton-furniture</code></td><td>Beds, tables, chairs, sofas, stoves, fridges, desks</td><td>&mdash;</td></tr>
+        <tr><td><code>plankton-site</code></td><td>Trees, fences, pools, walkways, utilities, boundaries</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="quickstart">
+    <h2>Quick start</h2>
+<pre><code>\documentclass[border=1cm]{standalone}
+\usepackage{plankton-base}
+\usepackage{plankton-electrical}
+\usepackage{plankton-furniture}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+  % Walls
+  \planwall{0,0}{6,0}
+  \planwall{6,0}{6,4}
+  \planwall{6,4}{0,4}
+  \planwall{0,4}{0,0}
+
+  % Door and window
+  \plandoor{1,0}{0}
+  \planwindow{2,4}{4,4}
+
+  % Electrical
+  \planoutlet{0.2,1}{0}
+  \planlight{3,2}{0}
+
+  % Furniture
+  \plansofa[seats=3]{0.3,1.5}{0}
+  \plantable[shape=round]{3,1.5}{0.8}{0.8}
+
+  % Label
+  \planlabel{3,3.5}{Living Room}
+\end{tikzpicture}
+\end{document}</code></pre>
+  </section>
+
+</div>
+
+<footer>
+  <p><a href="https://github.com/jlswea/tikz-plankton">plankton</a> is released under the
+    <a href="https://www.latex-project.org/lppl.txt">LPPL 1.3c</a> license.</p>
+</footer>
+
+</body>
+</html>

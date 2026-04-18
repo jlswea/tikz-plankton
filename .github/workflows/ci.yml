@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-pictures \
+            texlive-fonts-recommended \
+            lmodern \
+            dvisvgm
+
+      - name: Extract .sty files
+        run: make sty
+
+      - name: Build documentation
+        run: make doc
+
+      - name: Compile examples
+        run: make examples
+
+      - name: Check SVG drift
+        run: |
+          make svgs
+          if git diff --name-only docs/img/*.svg | grep -q .; then
+            echo "::warning::SVG files have changed — run 'make svgs' locally and commit"
+          fi

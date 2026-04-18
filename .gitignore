@@ -15,4 +15,5 @@
 *.hd
 *.sty
 *.zip
+!docs/img/*.svg
 .DS_Store
