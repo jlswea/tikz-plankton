@@ -1,0 +1,2016 @@
+% \iffalse meta-comment
+%
+% plankton -- TikZ macros for architectural floor plans and site plans
+% Copyright (C) 2024-2026 Julius Volland
+%
+% This work may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License (LPPL), version 1.3c or later.
+% The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008-05-04 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+% The Current Maintainer of this work is Julius Volland.
+%
+% This work consists of the files plankton.dtx and plankton.ins
+% and the derived files:
+%   plankton-base.sty
+%   plankton-electrical.sty
+%   plankton-plumbing.sty
+%   plankton-hvac.sty
+%   plankton-furniture.sty
+%   plankton-site.sty
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{plankton.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v0.1.0}{2026/04/18}{Initial CTAN release.}
+%
+% \GetFileInfo{plankton-base.sty}
+%
+% \title{The \textsf{plankton} package\thanks{This document
+%   corresponds to \textsf{plankton}~v0.1.0, dated 2026/04/18.}}
+% \author{Julius Volland}
+% \date{2026/04/18}
+%
+% \maketitle
+%
+% \begin{abstract}
+% \textsf{plankton} is a collection of six TikZ packages for drawing
+% architectural floor plans and site plans. It provides macros for
+% walls, doors, windows, stairs, dimensions, electrical symbols,
+% plumbing fixtures, HVAC components, furniture, and site elements
+% such as trees, fences, pools, and utility lines.
+% \end{abstract}
+%
+% \tableofcontents
+%
+% \section{Introduction}
+%
+% \textsf{plankton} provides a layered approach to floor plan drawing.
+% Each package handles one discipline (architectural, electrical,
+% plumbing, HVAC, furniture, site), allowing layers to be composed
+% independently.
+%
+% \subsection{Design philosophy}
+%
+% \begin{itemize}
+%   \item \textbf{Scale:} 1 TikZ unit = 1 metre.
+%     Furniture and fixtures are drawn at real-world dimensions.
+%   \item \textbf{Standards:} IEC/ISO symbols are the default.
+%     US symbols are available via the |standard=us| package option.
+%   \item \textbf{Layers:} Use TikZ |scope| environments to organise
+%     drawings into logical layers (base, electrical, plumbing, etc.).
+%   \item \textbf{Colours:} Each discipline has a default colour:
+%     architectural = black, electrical = |blue!70!black|,
+%     plumbing = |cyan!60!black|, HVAC = green, furniture = brown,
+%     site = dark forest green. All are overridable per-macro.
+% \end{itemize}
+%
+% \subsection{Requirements}
+%
+% All packages require \textsf{tikz} and \textsf{xkeyval}.
+% Individual packages load additional TikZ libraries as needed
+% (|calc|, |patterns|, |decorations.markings|, |decorations.pathmorphing|,
+% |arrows.meta|).
+%
+% \section{Installation}
+%
+% Run the installer to extract the |.sty| files:
+% \begin{verbatim}
+%   latex plankton.ins
+% \end{verbatim}
+% Then copy the six |.sty| files to a directory in your \TeX\ search
+% path, for example |texmf-local/tex/latex/plankton/|, and run
+% |mktexlsr| (or |texhash|).
+%
+% \section{Quick start}
+%
+% A minimal floor plan document:
+% \begin{verbatim}
+%   \documentclass[border=1cm]{standalone}
+%   \usepackage{plankton-base}
+%   \usepackage{plankton-electrical}
+%   \usepackage{plankton-plumbing}
+%   \usepackage{plankton-hvac}
+%   \usepackage{plankton-furniture}
+%   \usepackage{plankton-site}
+%
+%   \begin{document}
+%   \begin{tikzpicture}[x=1cm, y=1cm]
+%     % Base layer
+%     \floorwall{0,0}{8,0}
+%     \floorwall{8,0}{8,6}
+%     \floorwall{8,6}{0,6}
+%     \floorwall{0,6}{0,0}
+%     \floordoor{1,0}{0}
+%     \floorwindow{3,6}{5,6}
+%     \floorlabel{4,3}{Room}
+%   \end{tikzpicture}
+%   \end{document}
+% \end{verbatim}
+%
+% \section{Package: plankton-base}
+%
+% \subsection{Options}
+%
+% \begin{tabular}{lll}
+%   \textbf{Option} & \textbf{Values} & \textbf{Default} \\
+%   |units| & |metric|, |imperial| & |metric|
+% \end{tabular}
+%
+% The |units| option controls dimension labels (mm vs feet-inches),
+% dimension line terminators (oblique ticks vs arrows), window style
+% (ISO single-line vs US triple-line), and scale indicator text.
+%
+% \subsection{Macros}
+%
+% \DescribeMacro{\floorwall}
+% |\floorwall[|\meta{options}|]{|\meta{x1,y1}|}{|\meta{x2,y2}|}|
+%
+% Draws a wall segment. Options: |thickness| (default |0.15cm|),
+% |color| (default |black|), |style| (|single| or |double|).
+%
+% \DescribeMacro{\floorwallpath}
+% |\floorwallpath[|\meta{options}|]{|\meta{path}|}|
+%
+% Draws a multi-segment wall path with mitered corners. Options:
+% |thickness|, |color|, |closed| (|true| or |false|).
+%
+% \DescribeMacro{\floorroom}
+% |\floorroom[|\meta{options}|]{|\meta{label}|}{|\meta{coords}|}|
+%
+% Fills a polygon and places a centroid label. Options: |fill|
+% (default |gray!5|), |opacity| (default |0.5|).
+%
+% \DescribeMacro{\floorlabel}
+% |\floorlabel{|\meta{x,y}|}{|\meta{text}|}|
+%
+% Places a room label at the given coordinates.
+%
+% \DescribeMacro{\floordoor}
+% |\floordoor[|\meta{options}|]{|\meta{x,y}|}{|\meta{angle}|}|
+%
+% Draws a door leaf with swing arc. Options: |width| (default |0.9|),
+% |hinge| (|left| or |right|), |color|, |opening| (arc angle,
+% default |90|).
+%
+% \DescribeMacro{\floorwindow}
+% |\floorwindow[|\meta{options}|]{|\meta{x1,y1}|}{|\meta{x2,y2}|}|
+%
+% Draws a window. ISO style: single line with perpendicular jamb ticks.
+% US style: triple parallel lines. Options: |color|.
+%
+% \DescribeMacro{\floorstairs}
+% |\floorstairs[|\meta{options}|]{|\meta{x,y}|}{|\meta{w}|}{|\meta{h}|}{|\meta{steps}|}|
+%
+% Draws a stair block. Options: |direction| (|up| or |down|),
+% |rotation|.
+%
+% \DescribeMacro{\floordimension}
+% |\floordimension[|\meta{options}|]{|\meta{x1,y1}|}{|\meta{x2,y2}|}|
+%
+% Draws a dimension line with auto-calculated label.
+% Metric: oblique tick terminators, millimetre label.
+% Imperial: arrow terminators, feet-inches label.
+% Options: |offset| (default |0.5|), |label| (override auto-label),
+% |position| (|above| or |below|).
+%
+% \DescribeMacro{\floorscale}
+% |\floorscale{|\meta{x,y}|}|
+%
+% Places a scale indicator. Metric: ``Scale: 1:50''.
+% Imperial: ``Scale: 1/4\textquotedbl\ = 1'-0\textquotedbl''.
+%
+% \section{Package: plankton-electrical}
+%
+% \subsection{Options}
+%
+% \begin{tabular}{lll}
+%   \textbf{Option} & \textbf{Values} & \textbf{Default} \\
+%   |standard| & |iec|, |us| & |iec|
+% \end{tabular}
+%
+% \subsection{Macros}
+%
+% \DescribeMacro{\flooroutlet}
+% |\flooroutlet[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Duplex receptacle. IEC: semicircle against wall.
+% US: circle with parallel lines and wall tick.
+% Options: |type| (|standard|, |gfci|, |220v|), |color|.
+%
+% \DescribeMacro{\floorswitch}
+% |\floorswitch[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Light switch. IEC: pivot dot with lever line.
+% US: ``S'' in circle with wall tick.
+% Options: |type| (|single|, |three-way|, |dimmer|), |color|.
+%
+% \DescribeMacro{\floorlight}
+% |\floorlight[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Light fixture. IEC: circle with 8 radiating rays.
+% US: crossed circle.
+% Options: |type| (|ceiling|, |recessed|, |pendant|, |wall|), |color|.
+%
+% \DescribeMacro{\floorpanel}
+% |\floorpanel[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Electrical panel. IEC: rectangle with diagonal hash marks.
+% US: rectangle with ``EP'' label.
+% Options: |color|.
+%
+% \DescribeMacro{\floorwire}
+% |\floorwire[|\meta{options}|]{|\meta{path}|}|
+%
+% Wiring run (dashed line). Options: |color|.
+%
+% \section{Package: plankton-plumbing}
+%
+% \subsection{Options}
+%
+% \begin{tabular}{lll}
+%   \textbf{Option} & \textbf{Values} & \textbf{Default} \\
+%   |standard| & |iso|, |us| & |iso|
+% \end{tabular}
+%
+% \subsection{Macros}
+%
+% \DescribeMacro{\floorsink}
+% |\floorsink[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Sink fixture with oval basin, drain dot, and faucet indicators.
+% Options: |type| (|kitchen|, |bathroom|, |utility|), |color|.
+%
+% \DescribeMacro{\floortoilet}
+% |\floortoilet[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Toilet with tank rectangle and bowl oval. Options: |color|.
+%
+% \DescribeMacro{\floortub}
+% |\floortub[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{length}|}|
+%
+% Bathtub with outer rectangle, inner basin, and drain.
+% Options: |color|, |rotation|.
+%
+% \DescribeMacro{\floorshower}
+% |\floorshower[|\meta{options}|]{|\meta{x,y}|}{|\meta{size}|}|
+%
+% Shower stall (square) with head indicator circle and drain.
+% Options: |color|, |rotation|.
+%
+% \DescribeMacro{\floorshutoff}
+% |\floorshutoff[|\meta{options}|]{|\meta{x,y}|}|
+%
+% Shutoff valve. ISO: equilateral triangle.
+% US: diamond shape. Options: |color|.
+%
+% \DescribeMacro{\floorsupplyline}
+% |\floorsupplyline[|\meta{options}|]{|\meta{path}|}|
+%
+% Supply line. ISO: solid coloured line with inline H/C label.
+% US: dashed line.
+% Options: |type| (|cold|, |hot|), |color|.
+%
+% \DescribeMacro{\floordrainline}
+% |\floordrainline[|\meta{options}|]{|\meta{path}|}|
+%
+% Drain line (dotted). Options: |color|.
+%
+% \section{Package: plankton-hvac}
+%
+% \subsection{Options}
+%
+% \begin{tabular}{lll}
+%   \textbf{Option} & \textbf{Values} & \textbf{Default} \\
+%   |standard| & |iec|, |us| & |iec|
+% \end{tabular}
+%
+% \subsection{Macros}
+%
+% \DescribeMacro{\floordiffuser}
+% |\floordiffuser[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Air diffuser. Types: |supply| (horizontal vanes),
+% |return| (X pattern), |round| (concentric circles).
+% Options: |type|, |color|.
+%
+% \DescribeMacro{\floorduct}
+% |\floorduct[|\meta{options}|]{|\meta{path}|}|
+%
+% Ductwork with double-line walls and flow arrow.
+% Options: |width| (default |0.3|), |type| (|supply|, |return|), |color|.
+%
+% \DescribeMacro{\floorthermostat}
+% |\floorthermostat[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Thermostat. IEC: rectangle with thermometer icon.
+% US: ``T'' in circle. Options: |color|.
+%
+% \DescribeMacro{\floorexhaust}
+% |\floorexhaust[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Exhaust fan (circle with propeller blades). Options: |color|.
+%
+% \DescribeMacro{\floordamper}
+% |\floordamper[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Damper (bow-tie shape). Options: |color|.
+%
+% \DescribeMacro{\floorminisplit}
+% |\floorminisplit[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Mini-split indoor unit (elongated rectangle with airflow curves).
+% Options: |color|.
+%
+% \section{Package: plankton-furniture}
+%
+% This package has no |standard| option. Furniture is drawn at
+% real-world scale (1 unit = 1\,m).
+%
+% \subsection{Macros}
+%
+% \DescribeMacro{\floorbed}
+% |\floorbed[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Bed with frame and pillows. Types: |single| (0.9\(\times\)2.0\,m),
+% |double| (1.4\(\times\)2.0\,m), |king| (1.8\(\times\)2.0\,m).
+% Options: |type|, |color|.
+%
+% \DescribeMacro{\floortable}
+% |\floortable[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Table. Options: |shape| (|rectangular|, |round|), |color|.
+%
+% \DescribeMacro{\floorchair}
+% |\floorchair[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Chair (0.45\,m seat square with backrest). Options: |color|.
+%
+% \DescribeMacro{\floorsofa}
+% |\floorsofa[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Sofa with armrests. Width = seats \(\times\) 0.55 + 0.2\,m.
+% Options: |seats| (|2|, |3|, |4|), |color|.
+%
+% \DescribeMacro{\floorstove}
+% |\floorstove[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Stove/cooktop (0.6\,m square, 4 burner circles). Options: |color|.
+%
+% \DescribeMacro{\floorfridge}
+% |\floorfridge[|\meta{options}|]{|\meta{x,y}|}{|\meta{rotation}|}|
+%
+% Refrigerator (0.6\(\times\)0.7\,m with door division). Options: |color|.
+%
+% \DescribeMacro{\floordesk}
+% |\floordesk[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Desk with dashed chair arc. Options: |color|.
+%
+% \DescribeMacro{\floorshelving}
+% |\floorshelving[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Shelving unit with 3 horizontal shelf lines. Options: |color|.
+%
+% \section{Package: plankton-site}
+%
+% This package has no |standard| option.
+%
+% \subsection{Vegetation}
+%
+% \DescribeMacro{\floortree}
+% |\floortree[|\meta{options}|]{|\meta{x,y}|}{|\meta{radius}|}|
+%
+% Tree in plan view. Types: |deciduous| (default, filled circle
+% with scalloped crown), |coniferous| (circle with star pattern),
+% |palm| (circle with radiating fronds).
+% Options: |type|, |color|.
+%
+% \DescribeMacro{\floorshrub}
+% |\floorshrub[|\meta{options}|]{|\meta{x,y}|}{|\meta{radius}|}|
+%
+% Shrub (filled circle with scalloped edge). Options: |color|.
+%
+% \DescribeMacro{\floorhedge}
+% |\floorhedge[|\meta{options}|]{|\meta{start x,y}|}{|\meta{end x,y}|}|
+%
+% Hedge strip with wavy edges. Options: |color|, |width| (default |0.3|).
+%
+% \DescribeMacro{\floorlawn}
+% |\floorlawn[|\meta{options}|]{|\meta{coords}|}|
+%
+% Lawn area (filled polygon). Options: |color|, |opacity| (default |0.3|).
+%
+% \DescribeMacro{\floorgardenbed}
+% |\floorgardenbed[|\meta{options}|]{|\meta{coords}|}|
+%
+% Garden/planting bed (filled polygon). Options: |color|,
+% |opacity| (default |0.4|).
+%
+% \subsection{Hardscape}
+%
+% \DescribeMacro{\floorpatio}
+% |\floorpatio[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Patio with material textures. Materials: |concrete| (default),
+% |wood| (parallel decking lines), |stone| (grid subdivisions).
+% Options: |color|, |material|.
+%
+% \DescribeMacro{\floorpathwalk}
+% |\floorpathwalk[|\meta{options}|]{|\meta{path}|}|
+%
+% Walkway (double-line path with gray fill). Options: |color|,
+% |width| (default |0.8|).
+%
+% \DescribeMacro{\floordriveway}
+% |\floordriveway[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Driveway (filled rectangle). Options: |color|.
+%
+% \DescribeMacro{\floorfence}
+% |\floorfence[|\meta{options}|]{|\meta{start x,y}|}{|\meta{end x,y}|}|
+%
+% Fence. Types: |wood| (default, tick marks), |chain| (zigzag),
+% |wall| (thick solid line). Options: |type|, |color|.
+%
+% \DescribeMacro{\floorretaining}
+% |\floorretaining[|\meta{options}|]{|\meta{start x,y}|}{|\meta{end x,y}|}|
+%
+% Retaining wall with hatch marks. Options: |color|.
+%
+% \subsection{Water features}
+%
+% \DescribeMacro{\floorpool}
+% |\floorpool[|\meta{options}|]{|\meta{x,y}|}{|\meta{width}|}{|\meta{depth}|}|
+%
+% Swimming pool (blue rounded rectangle). Options: |color|.
+%
+% \DescribeMacro{\floorpond}
+% |\floorpond[|\meta{options}|]{|\meta{coords}|}|
+%
+% Freeform pond (blue filled polygon). Options: |color|.
+%
+% \subsection{Utilities}
+%
+% \DescribeMacro{\floorsiteutility}
+% |\floorsiteutility[|\meta{options}|]{|\meta{path}|}|
+%
+% Utility line with inline type label. Types: |water| (default),
+% |sewer|, |gas|, |electric|. Each type has a distinct colour and
+% dash pattern. Options: |type|, |color|.
+%
+% \DescribeMacro{\floorutilitypole}
+% |\floorutilitypole[|\meta{options}|]{|\meta{x,y}|}|
+%
+% Utility pole (filled circle with crossbar). Options: |color|.
+%
+% \subsection{Site boundaries}
+%
+% \DescribeMacro{\floorproperty}
+% |\floorproperty[|\meta{options}|]{|\meta{path}|}|
+%
+% Property boundary (dash-dot line). Options: |color|,
+% |label| (inline text label).
+%
+% \DescribeMacro{\floorsetback}
+% |\floorsetback[|\meta{options}|]{|\meta{path}|}|
+%
+% Building setback line (dashed). Options: |color|, |offset|.
+%
+% \section{Standards reference}
+%
+% \begin{tabular}{lll}
+%   \textbf{Package} & \textbf{IEC/ISO (default)} & \textbf{US} \\
+%   plankton-base & Oblique tick dims, ISO windows & Arrow dims, US windows \\
+%   plankton-electrical & Semicircle outlets, lever switches & Circle outlets, S-switches \\
+%   plankton-plumbing & Solid supply lines, triangle valves & Dashed supply, diamond valves \\
+%   plankton-hvac & Rectangle thermostat & Circle ``T'' thermostat \\
+% \end{tabular}
+%
+% \StopEventually{\PrintChanges\PrintIndex}
+%
+% \section{Implementation}
+%
+% \subsection{plankton-base}
+%
+%    \begin{macrocode}
+%<*base>
+% plankton-base.sty — Architectural floor plan elements for TikZ
+% Provides: walls, rooms, doors, windows, stairs, dimensions
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-base}[2024/01/01 Plankton base architectural elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc,patterns,decorations.markings,arrows.meta}
+
+%% ============================================================
+%% Package options: units = metric (default) | imperial
+%% ============================================================
+\newif\iffp@imperial
+\fp@imperialfalse
+
+\DeclareOptionX{units}{%
+  \def\fp@tmp{#1}%
+  \def\fp@opt@metric{metric}%
+  \def\fp@opt@imperial{imperial}%
+  \ifx\fp@tmp\fp@opt@imperial
+    \fp@imperialtrue
+  \else
+    \fp@imperialfalse
+  \fi
+}
+\ProcessOptionsX\relax
+
+%% ============================================================
+%% Configuration
+%% ============================================================
+\newlength{\fp@wallthickness}
+\setlength{\fp@wallthickness}{0.15cm}
+
+\newlength{\fp@doorwidth}
+\setlength{\fp@doorwidth}{0.9cm}
+
+\newlength{\fp@windowwidth}
+\setlength{\fp@windowwidth}{0.8cm}
+
+%% Scale: 1 unit = 1 meter by default
+\newcommand{\fp@scale}{1}
+
+%% ============================================================
+%% Wall
+%% ============================================================
+%    \end{macrocode}
+%
+% \begin{macro}{\floorwall}
+% Draws a single wall segment between two points.
+%    \begin{macrocode}
+\define@key{floorwall}{thickness}{\setlength{\fp@wallthickness}{#1}}
+\define@key{floorwall}{color}{\def\fp@wallcolor{#1}}
+\define@key{floorwall}{style}{\def\fp@wallstyle{#1}}
+
+\newcommand{\floorwall}[3][]{%
+  \begingroup
+  \def\fp@wallcolor{black}%
+  \def\fp@wallstyle{single}%
+  \setkeys{floorwall}{#1}%
+  \def\fp@tmp@double{double}%
+  \ifx\fp@wallstyle\fp@tmp@double
+    \pgfmathsetmacro{\fp@halfwall}{\fp@wallthickness/2}%
+    \draw[\fp@wallcolor, line width=0.4pt]
+      ($(#2)!\fp@halfwall pt!90:(#3)$) -- ($(#3)!\fp@halfwall pt!-90:(#2)$);%
+    \draw[\fp@wallcolor, line width=0.4pt]
+      ($(#2)!\fp@halfwall pt!-90:(#3)$) -- ($(#3)!\fp@halfwall pt!90:(#2)$);%
+  \else
+    \draw[line width=\fp@wallthickness, \fp@wallcolor, line cap=rect]
+      (#2) -- (#3);%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorwallpath}
+% Draws a multi-segment wall path with mitered corners.
+%    \begin{macrocode}
+\define@key{floorwallpath}{thickness}{\setlength{\fp@wallthickness}{#1}}
+\define@key{floorwallpath}{color}{\def\fp@wallpathcolor{#1}}
+\define@key{floorwallpath}{closed}{\def\fp@wallpathclosed{#1}}
+
+\newcommand{\floorwallpath}[2][]{%
+  \begingroup
+  \def\fp@wallpathcolor{black}%
+  \def\fp@wallpathclosed{false}%
+  \setkeys{floorwallpath}{#1}%
+  \def\fp@tmp@closedtrue{true}%
+  \ifx\fp@wallpathclosed\fp@tmp@closedtrue
+    \draw[\fp@wallpathcolor, double=\fp@wallpathcolor, double distance=\fp@wallthickness,
+          line width=0.4pt, line join=miter, line cap=rect]
+      #2 -- cycle;%
+  \else
+    \draw[\fp@wallpathcolor, double=\fp@wallpathcolor, double distance=\fp@wallthickness,
+          line width=0.4pt, line join=miter, line cap=rect]
+      #2;%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorroom}
+% Fills a polygon and places a centroid label.
+%    \begin{macrocode}
+\define@key{floorroom}{fill}{\def\fp@roomfill{#1}}
+\define@key{floorroom}{opacity}{\def\fp@roomopacity{#1}}
+
+\newcommand{\floorroom}[3][]{%
+  \begingroup
+  \def\fp@roomfill{gray!5}%
+  \def\fp@roomopacity{0.5}%
+  \setkeys{floorroom}{#1}%
+  \fill[\fp@roomfill, opacity=\fp@roomopacity] #3 -- cycle;%
+  \path #3 -- cycle;%
+  \node[font=\footnotesize, text=black, opacity=1] at (barycentric cs:#3) {#2};%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorlabel}
+% Places a room label at given coordinates.
+%    \begin{macrocode}
+\newcommand{\floorlabel}[2]{%
+  \node[font=\footnotesize] at (#1) {#2};%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordoor}
+% Draws a door leaf with quarter-circle swing arc.
+%    \begin{macrocode}
+\define@key{floordoor}{width}{\def\fp@doorw{#1}}
+\define@key{floordoor}{hinge}{\def\fp@doorhinge{#1}}
+\define@key{floordoor}{color}{\def\fp@doorcolor{#1}}
+\define@key{floordoor}{opening}{\def\fp@dooropening{#1}}
+
+\newcommand{\floordoor}[3][]{%
+  \begingroup
+  \def\fp@doorw{0.9}%
+  \def\fp@doorhinge{left}%
+  \def\fp@doorcolor{black}%
+  \def\fp@dooropening{90}%
+  \setkeys{floordoor}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@doorcolor, thin] (0,0) -- (\fp@doorw,0);%
+    \draw[\fp@doorcolor, thin, dashed]
+      (\fp@doorw,0) arc[start angle=0, end angle=\fp@dooropening, radius=\fp@doorw];%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorwindow}
+% Draws a window. ISO: single line with jamb ticks. US: triple parallel lines.
+%    \begin{macrocode}
+\define@key{floorwindow}{color}{\def\fp@windowcolor{#1}}
+
+\newcommand{\floorwindow}[3][]{%
+  \begingroup
+  \def\fp@windowcolor{black}%
+  \setkeys{floorwindow}{#1}%
+  \iffp@imperial
+    \draw[\fp@windowcolor, line width=0.5pt] (#2) -- (#3);%
+    \pgfmathsetmacro{\fp@woff}{0.04}%
+    \draw[\fp@windowcolor, line width=0.5pt]
+      ($(#2)!\fp@woff!90:(#3)$) -- ($(#3)!\fp@woff!-90:(#2)$);%
+    \draw[\fp@windowcolor, line width=0.5pt]
+      ($(#2)!\fp@woff!-90:(#3)$) -- ($(#3)!\fp@woff!90:(#2)$);%
+    \draw[white, line width=\fp@wallthickness] (#2) -- (#3);%
+    \draw[\fp@windowcolor, line width=0.5pt] (#2) -- (#3);%
+    \draw[\fp@windowcolor, line width=0.5pt]
+      ($(#2)!\fp@woff!90:(#3)$) -- ($(#3)!\fp@woff!-90:(#2)$);%
+    \draw[\fp@windowcolor, line width=0.5pt]
+      ($(#2)!\fp@woff!-90:(#3)$) -- ($(#3)!\fp@woff!90:(#2)$);%
+  \else
+    \draw[white, line width=\fp@wallthickness] (#2) -- (#3);%
+    \draw[\fp@windowcolor, line width=0.8pt] (#2) -- (#3);%
+    \pgfmathsetmacro{\fp@ticklen}{0.06}%
+    \draw[\fp@windowcolor, line width=0.8pt]
+      ($(#2)!\fp@ticklen!90:(#3)$) -- ($(#2)!\fp@ticklen!-90:(#3)$);%
+    \draw[\fp@windowcolor, line width=0.8pt]
+      ($(#3)!\fp@ticklen!90:(#2)$) -- ($(#3)!\fp@ticklen!-90:(#2)$);%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorstairs}
+% Draws a stair block with direction arrow.
+%    \begin{macrocode}
+\define@key{floorstairs}{direction}{\def\fp@stairdir{#1}}
+\define@key{floorstairs}{rotation}{\def\fp@stairrot{#1}}
+
+\newcommand{\floorstairs}[5][]{%
+  \begingroup
+  \def\fp@stairdir{up}%
+  \def\fp@stairrot{0}%
+  \setkeys{floorstairs}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=\fp@stairrot]
+    \draw[thin] (0,0) rectangle (#3,#4);%
+    \pgfmathsetmacro{\fp@stepsize}{#4/#5}%
+    \foreach \i in {1,...,#5} {%
+      \draw[thin] (0, \i*\fp@stepsize) -- (#3, \i*\fp@stepsize);%
+    }%
+    \draw[-{Stealth[length=3pt]}, thin]
+      (#3/2, 0.1) -- (#3/2, #4-0.1);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordimension}
+% Draws a dimension line with auto-calculated label.
+%    \begin{macrocode}
+\define@key{floordim}{offset}{\def\fp@dimoffset{#1}}
+\define@key{floordim}{label}{\def\fp@dimlabel{#1}}
+\define@key{floordim}{position}{\def\fp@dimpos{#1}}
+
+\newcommand{\floordimension}[3][]{%
+  \begingroup
+  \def\fp@dimoffset{0.5}%
+  \def\fp@dimlabel{}%
+  \def\fp@dimpos{above}%
+  \setkeys{floordim}{#1}%
+  \coordinate (fp@dimA) at ($(#2)!\fp@dimoffset!90:(#3)$);%
+  \coordinate (fp@dimB) at ($(#3)!\fp@dimoffset!-90:(#2)$);%
+  \draw[thin, gray] (#2) -- (fp@dimA);%
+  \draw[thin, gray] (#3) -- (fp@dimB);%
+  \iffp@imperial
+    \draw[thin, gray, {Stealth[length=2pt]}-{Stealth[length=2pt]}]
+      (fp@dimA) -- (fp@dimB);%
+  \else
+    \draw[thin, gray] (fp@dimA) -- (fp@dimB);%
+    \pgfmathanglebetweenpoints%
+      {\pgfpointanchor{fp@dimA}{center}}%
+      {\pgfpointanchor{fp@dimB}{center}}%
+    \let\fp@dimangle\pgfmathresult
+    \begin{scope}[shift={(fp@dimA)}, rotate=\fp@dimangle]
+      \draw[thin, gray] (-0.08,-0.08) -- (0.08,0.08);%
+    \end{scope}
+    \begin{scope}[shift={(fp@dimB)}, rotate=\fp@dimangle]
+      \draw[thin, gray] (-0.08,-0.08) -- (0.08,0.08);%
+    \end{scope}
+  \fi
+  \ifx\fp@dimlabel\empty
+    \pgfpointdiff{\pgfpointanchor{fp@dimA}{center}}{\pgfpointanchor{fp@dimB}{center}}%
+    \pgfmathsetmacro{\fp@dist}{veclen(\pgf@x,\pgf@y)/1cm}%
+    \iffp@imperial
+      \pgfmathsetmacro{\fp@totalinches}{\fp@dist * 39.3701}%
+      \pgfmathsetmacro{\fp@feet}{int(\fp@totalinches / 12)}%
+      \pgfmathsetmacro{\fp@inches}{int(round(\fp@totalinches - \fp@feet * 12))}%
+      \node[\fp@dimpos, font=\tiny, gray] at ($(fp@dimA)!0.5!(fp@dimB)$)
+        {\fp@feet'-\fp@inches"};%
+    \else
+      \pgfmathsetmacro{\fp@distmm}{int(round(\fp@dist * 1000))}%
+      \node[\fp@dimpos, font=\tiny, gray] at ($(fp@dimA)!0.5!(fp@dimB)$)
+        {\fp@distmm};%
+    \fi
+  \else
+    \node[\fp@dimpos, font=\tiny, gray] at ($(fp@dimA)!0.5!(fp@dimB)$) {\fp@dimlabel};%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorscale}
+% Places a scale indicator.
+%    \begin{macrocode}
+\newcommand{\floorscale}[1]{%
+  \iffp@imperial
+    \node[font=\footnotesize, anchor=west] at (#1)
+      {Scale: $\frac{1}{4}$'' = 1'-0''};%
+  \else
+    \node[font=\footnotesize, anchor=west] at (#1)
+      {Scale: 1:50};%
+  \fi
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</base>
+%
+% \subsection{plankton-electrical}
+%
+%    \begin{macrocode}
+%<*electrical>
+% plankton-electrical.sty — Electrical floor plan symbols for TikZ
+% Provides: outlets, switches, light fixtures, panels, wiring
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-electrical}[2024/01/01 Plankton electrical elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc}
+
+%% ============================================================
+%% Package options: standard = iec (default) | us
+%% ============================================================
+\newif\iffp@elecus
+\fp@elecusfalse
+
+\DeclareOptionX{standard}{%
+  \def\fp@tmp{#1}%
+  \def\fp@opt@us{us}%
+  \ifx\fp@tmp\fp@opt@us
+    \fp@elecustrue
+  \else
+    \fp@elecusfalse
+  \fi
+}
+\ProcessOptionsX\relax
+
+%% ============================================================
+%% Configuration
+%% ============================================================
+\newcommand{\fp@elecscale}{0.15}
+
+%% ============================================================
+%% Outlet (duplex receptacle)
+%% ============================================================
+%    \end{macrocode}
+%
+% \begin{macro}{\flooroutlet}
+% Duplex receptacle. IEC: semicircle. US: circle with parallel lines.
+%    \begin{macrocode}
+\define@key{flooroutlet}{type}{\def\fp@outlettype{#1}}
+\define@key{flooroutlet}{color}{\def\fp@outletcolor{#1}}
+
+\newcommand{\flooroutlet}[3][]{%
+  \begingroup
+  \def\fp@outlettype{standard}%
+  \def\fp@outletcolor{blue!70!black}%
+  \setkeys{flooroutlet}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@elecscale]
+    \iffp@elecus
+      \draw[\fp@outletcolor, thick] (0,0) circle (1);%
+      \draw[\fp@outletcolor, thick] (-0.4, -0.5) -- (-0.4, 0.5);%
+      \draw[\fp@outletcolor, thick] (0.4, -0.5) -- (0.4, 0.5);%
+      \draw[\fp@outletcolor, thick] (0, -1) -- (0, -1.5);%
+    \else
+      \draw[\fp@outletcolor, thick] (-1,0) arc[start angle=180, end angle=0, radius=1];%
+      \draw[\fp@outletcolor, thick] (-1,0) -- (1,0);%
+      \draw[\fp@outletcolor, thick] (0, 0) -- (0, -0.5);%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorswitch}
+% Light switch. IEC: pivot dot + lever. US: ``S'' in circle.
+%    \begin{macrocode}
+\define@key{floorswitch}{type}{\def\fp@switchtype{#1}}
+\define@key{floorswitch}{color}{\def\fp@switchcolor{#1}}
+
+\newcommand{\floorswitch}[3][]{%
+  \begingroup
+  \def\fp@switchtype{single}%
+  \def\fp@switchcolor{blue!70!black}%
+  \setkeys{floorswitch}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@elecscale]
+    \iffp@elecus
+      \draw[\fp@switchcolor, thick] (0,0) circle (1);%
+      \node[\fp@switchcolor, font=\bfseries\fontsize{4}{4}\selectfont] at (0,0) {S};%
+      \draw[\fp@switchcolor, thick] (0, -1) -- (0, -1.5);%
+    \else
+      \fill[\fp@switchcolor] (0,0) circle (0.3);%
+      \draw[\fp@switchcolor, thick] (0,0) -- (1.2,1.2);%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorlight}
+% Light fixture. IEC: circle with rays. US: crossed circle.
+%    \begin{macrocode}
+\define@key{floorlight}{type}{\def\fp@lighttype{#1}}
+\define@key{floorlight}{color}{\def\fp@lightcolor{#1}}
+
+\newcommand{\floorlight}[3][]{%
+  \begingroup
+  \def\fp@lighttype{ceiling}%
+  \def\fp@lightcolor{blue!70!black}%
+  \setkeys{floorlight}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@elecscale]
+    \iffp@elecus
+      \draw[\fp@lightcolor, thick] (0,0) circle (1);%
+      \draw[\fp@lightcolor, thick] (-0.7,-0.7) -- (0.7,0.7);%
+      \draw[\fp@lightcolor, thick] (-0.7,0.7) -- (0.7,-0.7);%
+    \else
+      \draw[\fp@lightcolor, thick] (0,0) circle (0.6);%
+      \foreach \a in {0,45,...,315} {%
+        \draw[\fp@lightcolor, thick] (\a:0.6) -- (\a:1.2);%
+      }%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorpanel}
+% Electrical panel. IEC: rectangle with hash marks. US: ``EP'' label.
+%    \begin{macrocode}
+\define@key{floorpanel}{color}{\def\fp@panelcolor{#1}}
+
+\newcommand{\floorpanel}[3][]{%
+  \begingroup
+  \def\fp@panelcolor{blue!70!black}%
+  \setkeys{floorpanel}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@elecscale]
+    \iffp@elecus
+      \draw[\fp@panelcolor, thick] (-1.5,-2) rectangle (1.5,2);%
+      \draw[\fp@panelcolor, thick] (-1.5,0) -- (1.5,0);%
+      \node[\fp@panelcolor, font=\bfseries\fontsize{3}{3}\selectfont] at (0,1) {EP};%
+    \else
+      \draw[\fp@panelcolor, thick] (-1.5,-2) rectangle (1.5,2);%
+      \foreach \yy in {-1.6,-0.8,0,0.8,1.6} {%
+        \draw[\fp@panelcolor, thin] (-1.5,\yy) -- (-0.5,\yy+0.4);%
+        \draw[\fp@panelcolor, thin] (-0.5,\yy) -- (0.5,\yy+0.4);%
+        \draw[\fp@panelcolor, thin] (0.5,\yy) -- (1.5,\yy+0.4);%
+      }%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorwire}
+% Wiring run (dashed line).
+%    \begin{macrocode}
+\define@key{floorwire}{color}{\def\fp@wirecolor{#1}}
+
+\newcommand{\floorwire}[2][]{%
+  \begingroup
+  \def\fp@wirecolor{blue!70!black}%
+  \setkeys{floorwire}{#1}%
+  \draw[\fp@wirecolor, thin, dashed] #2;%
+  \endgroup
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</electrical>
+%
+% \subsection{plankton-plumbing}
+%
+%    \begin{macrocode}
+%<*plumbing>
+% plankton-plumbing.sty — Plumbing floor plan symbols for TikZ
+% Provides: sinks, toilets, tubs/showers, supply/drain lines, shutoff valves
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-plumbing}[2024/01/01 Plankton plumbing elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc,decorations.markings}
+
+%% ============================================================
+%% Package options: standard = iso (default) | us
+%% ============================================================
+\newif\iffp@plumbus
+\fp@plumbusfalse
+
+\DeclareOptionX{standard}{%
+  \def\fp@tmp{#1}%
+  \def\fp@opt@us{us}%
+  \ifx\fp@tmp\fp@opt@us
+    \fp@plumbustrue
+  \else
+    \fp@plumbusfalse
+  \fi
+}
+\ProcessOptionsX\relax
+
+%% ============================================================
+%% Configuration
+%% ============================================================
+\newcommand{\fp@plumbscale}{0.15}
+
+%% ============================================================
+%% Sink
+%% ============================================================
+%    \end{macrocode}
+%
+% \begin{macro}{\floorsink}
+% Sink with oval basin, drain, and faucet indicators.
+%    \begin{macrocode}
+\define@key{floorsink}{type}{\def\fp@sinktype{#1}}
+\define@key{floorsink}{color}{\def\fp@sinkcolor{#1}}
+
+\newcommand{\floorsink}[3][]{%
+  \begingroup
+  \def\fp@sinktype{bathroom}%
+  \def\fp@sinkcolor{cyan!60!black}%
+  \setkeys{floorsink}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@plumbscale]
+    \draw[\fp@sinkcolor, thick] (0,0) ellipse (1.5 and 1);%
+    \fill[\fp@sinkcolor] (0,0) circle (0.2);%
+    \draw[\fp@sinkcolor, thick] (-0.4, 1) -- (-0.4, 1.5);%
+    \draw[\fp@sinkcolor, thick] (0.4, 1) -- (0.4, 1.5);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floortoilet}
+% Toilet with tank and bowl.
+%    \begin{macrocode}
+\define@key{floortoilet}{color}{\def\fp@toiletcolor{#1}}
+
+\newcommand{\floortoilet}[3][]{%
+  \begingroup
+  \def\fp@toiletcolor{cyan!60!black}%
+  \setkeys{floortoilet}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@plumbscale]
+    \draw[\fp@toiletcolor, thick] (-1.2, 1) rectangle (1.2, 2);%
+    \draw[\fp@toiletcolor, thick] (0, 0) ellipse (1.2 and 1.2);%
+    \draw[\fp@toiletcolor, thin] (0, 0) ellipse (0.8 and 0.8);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floortub}
+% Bathtub with outer rectangle, inner basin, and drain.
+%    \begin{macrocode}
+\define@key{floortub}{color}{\def\fp@tubcolor{#1}}
+\define@key{floortub}{rotation}{\def\fp@tubrot{#1}}
+
+\newcommand{\floortub}[4][]{%
+  \begingroup
+  \def\fp@tubcolor{cyan!60!black}%
+  \def\fp@tubrot{0}%
+  \setkeys{floortub}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=\fp@tubrot]
+    \draw[\fp@tubcolor, thick] (0,0) rectangle (#3,#4);%
+    \draw[\fp@tubcolor, thin, rounded corners=0.1cm]
+      (0.05,0.05) rectangle (#3-0.05, #4-0.05);%
+    \fill[\fp@tubcolor] (#3/2, 0.2) circle (0.03);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorshower}
+% Shower stall with head indicator and drain.
+%    \begin{macrocode}
+\define@key{floorshower}{color}{\def\fp@showercolor{#1}}
+\define@key{floorshower}{rotation}{\def\fp@showerrot{#1}}
+
+\newcommand{\floorshower}[3][]{%
+  \begingroup
+  \def\fp@showercolor{cyan!60!black}%
+  \def\fp@showerrot{0}%
+  \setkeys{floorshower}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=\fp@showerrot]
+    \draw[\fp@showercolor, thick] (0,0) rectangle (#3,#3);%
+    \draw[\fp@showercolor, thin] (#3/2, #3/2) circle (#3/4);%
+    \fill[\fp@showercolor] (#3/2, #3/2) circle (0.03);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorshutoff}
+% Shutoff valve. ISO: triangle. US: diamond.
+%    \begin{macrocode}
+\define@key{floorshutoff}{color}{\def\fp@shutoffcolor{#1}}
+
+\newcommand{\floorshutoff}[2][]{%
+  \begingroup
+  \def\fp@shutoffcolor{cyan!60!black}%
+  \setkeys{floorshutoff}{#1}%
+  \begin{scope}[shift={(#2)}, scale=\fp@plumbscale]
+    \iffp@plumbus
+      \draw[\fp@shutoffcolor, thick, fill=white]
+        (0,0.8) -- (0.8,0) -- (0,-0.8) -- (-0.8,0) -- cycle;%
+    \else
+      \draw[\fp@shutoffcolor, thick, fill=white]
+        (0,0.8) -- (0.7,-0.4) -- (-0.7,-0.4) -- cycle;%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorsupplyline}
+% Supply line. ISO: solid coloured with inline label. US: dashed.
+%    \begin{macrocode}
+\define@key{floorsupply}{type}{\def\fp@supplytype{#1}}
+\define@key{floorsupply}{color}{\def\fp@supplycolor{#1}}
+
+\newcommand{\floorsupplyline}[2][]{%
+  \begingroup
+  \def\fp@supplytype{cold}%
+  \def\fp@supplycolor{cyan!60!black}%
+  \setkeys{floorsupply}{#1}%
+  \iffp@plumbus
+    \draw[\fp@supplycolor, thick, densely dashed] #2;%
+  \else
+    \def\fp@tmp@hot{hot}%
+    \ifx\fp@supplytype\fp@tmp@hot
+      \def\fp@iso@linecolor{red!70!black}%
+      \def\fp@iso@linelabel{H}%
+    \else
+      \def\fp@iso@linecolor{blue!70!black}%
+      \def\fp@iso@linelabel{C}%
+    \fi
+    \draw[\fp@iso@linecolor, thick,
+      postaction={decorate, decoration={markings,
+        mark=at position 0.5 with {%
+          \node[fill=white, inner sep=1pt, font=\tiny\bfseries, text=\fp@iso@linecolor]
+            {\fp@iso@linelabel};%
+        }%
+      }}] #2;%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordrainline}
+% Drain line (dotted).
+%    \begin{macrocode}
+\define@key{floordrain}{color}{\def\fp@draincolor{#1}}
+
+\newcommand{\floordrainline}[2][]{%
+  \begingroup
+  \def\fp@draincolor{gray!60}%
+  \setkeys{floordrain}{#1}%
+  \draw[\fp@draincolor, thick, densely dotted] #2;%
+  \endgroup
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</plumbing>
+%
+% \subsection{plankton-hvac}
+%
+%    \begin{macrocode}
+%<*hvac>
+% plankton-hvac.sty — HVAC floor plan symbols for TikZ
+% Provides: diffusers, ducts, thermostats, exhaust fans, dampers, mini-splits
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-hvac}[2024/01/01 Plankton HVAC elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc,arrows.meta,decorations.markings}
+
+%% ============================================================
+%% Package options: standard = iec (default) | us
+%% ============================================================
+\newif\iffp@hvacus
+\fp@hvacusfalse
+
+\DeclareOptionX{standard}{%
+  \def\fp@tmp{#1}%
+  \def\fp@opt@us{us}%
+  \ifx\fp@tmp\fp@opt@us
+    \fp@hvacustrue
+  \else
+    \fp@hvacusfalse
+  \fi
+}
+\ProcessOptionsX\relax
+
+%% ============================================================
+%% Configuration
+%% ============================================================
+\newcommand{\fp@hvacscale}{0.15}
+\definecolor{fp@hvaccolor}{RGB}{51,102,51}% green!50!black equivalent
+
+%% ============================================================
+%% Diffuser (supply/return/round)
+%% ============================================================
+%    \end{macrocode}
+%
+% \begin{macro}{\floordiffuser}
+% Air diffuser: supply, return, or round type.
+%    \begin{macrocode}
+\define@key{floordiffuser}{type}{\def\fp@diffusertype{#1}}
+\define@key{floordiffuser}{color}{\def\fp@diffusercolor{#1}}
+
+\newcommand{\floordiffuser}[3][]{%
+  \begingroup
+  \def\fp@diffusertype{supply}%
+  \def\fp@diffusercolor{fp@hvaccolor}%
+  \setkeys{floordiffuser}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@hvacscale]
+    \def\fp@tmp@round{round}%
+    \ifx\fp@diffusertype\fp@tmp@round
+      \draw[\fp@diffusercolor, thick] (0,0) circle (1.2);%
+      \draw[\fp@diffusercolor, thin] (0,0) circle (0.7);%
+      \draw[\fp@diffusercolor, thin] (0,0) circle (0.3);%
+    \else
+      \draw[\fp@diffusercolor, thick] (-1.5,-1) rectangle (1.5,1);%
+      \def\fp@tmp@return{return}%
+      \ifx\fp@diffusertype\fp@tmp@return
+        \draw[\fp@diffusercolor, thin] (-1.5,-1) -- (1.5,1);%
+        \draw[\fp@diffusercolor, thin] (-1.5,1) -- (1.5,-1);%
+      \else
+        \draw[\fp@diffusercolor, thin] (-1.3,-0.5) -- (1.3,-0.5);%
+        \draw[\fp@diffusercolor, thin] (-1.3,0) -- (1.3,0);%
+        \draw[\fp@diffusercolor, thin] (-1.3,0.5) -- (1.3,0.5);%
+      \fi
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorduct}
+% Ductwork with double-line walls and flow arrow.
+%    \begin{macrocode}
+\define@key{floorduct}{width}{\def\fp@ductwidth{#1}}
+\define@key{floorduct}{type}{\def\fp@ducttype{#1}}
+\define@key{floorduct}{color}{\def\fp@ductcolor{#1}}
+
+\newcommand{\floorduct}[2][]{%
+  \begingroup
+  \def\fp@ductwidth{0.3}%
+  \def\fp@ducttype{supply}%
+  \def\fp@ductcolor{fp@hvaccolor}%
+  \setkeys{floorduct}{#1}%
+  \draw[\fp@ductcolor, double=white, double distance=\fp@ductwidth cm,
+        line width=0.6pt,
+        postaction={draw, \fp@ductcolor, -{Stealth[length=3pt]},
+                    thin, shorten >=2pt, shorten <=2pt}]
+    #2;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorthermostat}
+% Thermostat. IEC: rectangle with thermometer. US: ``T'' in circle.
+%    \begin{macrocode}
+\define@key{floorthermostat}{color}{\def\fp@thermocolor{#1}}
+
+\newcommand{\floorthermostat}[3][]{%
+  \begingroup
+  \def\fp@thermocolor{fp@hvaccolor}%
+  \setkeys{floorthermostat}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@hvacscale]
+    \iffp@hvacus
+      \draw[\fp@thermocolor, thick] (0,0) circle (1);%
+      \node[\fp@thermocolor, font=\bfseries\fontsize{5}{5}\selectfont] at (0,0) {T};%
+    \else
+      \draw[\fp@thermocolor, thick] (-0.8,-1) rectangle (0.8,1);%
+      \fill[\fp@thermocolor] (0,-0.5) circle (0.25);%
+      \draw[\fp@thermocolor, thick] (-0.1,-0.5) -- (-0.1,0.6) -- (0.1,0.6) -- (0.1,-0.5);%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorexhaust}
+% Exhaust fan (circle with propeller blades).
+%    \begin{macrocode}
+\define@key{floorexhaust}{color}{\def\fp@exhaustcolor{#1}}
+
+\newcommand{\floorexhaust}[3][]{%
+  \begingroup
+  \def\fp@exhaustcolor{fp@hvaccolor}%
+  \setkeys{floorexhaust}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@hvacscale]
+    \draw[\fp@exhaustcolor, thick] (0,0) circle (1.2);%
+    \foreach \a in {0,90,180,270} {%
+      \draw[\fp@exhaustcolor, thick]
+        (0,0) -- (\a:0.9);%
+      \draw[\fp@exhaustcolor, thick]
+        (\a:0.3) .. controls (\a+25:0.7) .. (\a:1.0);%
+    }%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordamper}
+% Damper (bow-tie shape).
+%    \begin{macrocode}
+\define@key{floordamper}{color}{\def\fp@dampercolor{#1}}
+
+\newcommand{\floordamper}[3][]{%
+  \begingroup
+  \def\fp@dampercolor{fp@hvaccolor}%
+  \setkeys{floordamper}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@hvacscale]
+    \draw[\fp@dampercolor, thick, fill=white]
+      (-1.2,0.6) -- (0,0) -- (-1.2,-0.6) -- cycle;%
+    \draw[\fp@dampercolor, thick, fill=white]
+      (1.2,0.6) -- (0,0) -- (1.2,-0.6) -- cycle;%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorminisplit}
+% Mini-split indoor unit with airflow curves.
+%    \begin{macrocode}
+\define@key{floorminisplit}{color}{\def\fp@minisplitcolor{#1}}
+
+\newcommand{\floorminisplit}[3][]{%
+  \begingroup
+  \def\fp@minisplitcolor{fp@hvaccolor}%
+  \setkeys{floorminisplit}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3, scale=\fp@hvacscale]
+    \draw[\fp@minisplitcolor, thick] (-2.5,-0.5) rectangle (2.5,0.5);%
+    \draw[\fp@minisplitcolor, thin] (-1.5,-0.5) .. controls (-1.5,-1.2) and (-0.5,-1.2) .. (-0.5,-0.5);%
+    \draw[\fp@minisplitcolor, thin] (0.5,-0.5) .. controls (0.5,-1.2) and (1.5,-1.2) .. (1.5,-0.5);%
+  \end{scope}
+  \endgroup
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</hvac>
+%
+% \subsection{plankton-furniture}
+%
+%    \begin{macrocode}
+%<*furniture>
+% plankton-furniture.sty — Furniture floor plan symbols for TikZ
+% Provides: beds, tables, chairs, sofas, stoves, fridges, desks, shelving
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-furniture}[2024/01/01 Plankton furniture elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc}
+
+%% ============================================================
+%% Configuration — drawn at real-world scale (1 unit = 1m)
+%% ============================================================
+\definecolor{fp@furncolor}{RGB}{102,68,34}% brown!50!black equivalent
+
+%% ============================================================
+%% Bed
+%% ============================================================
+%    \end{macrocode}
+%
+% \begin{macro}{\floorbed}
+% Bed with frame and pillows.
+%    \begin{macrocode}
+\define@key{floorbed}{type}{\def\fp@bedtype{#1}}
+\define@key{floorbed}{color}{\def\fp@bedcolor{#1}}
+
+\newcommand{\floorbed}[3][]{%
+  \begingroup
+  \def\fp@bedtype{double}%
+  \def\fp@bedcolor{fp@furncolor}%
+  \setkeys{floorbed}{#1}%
+  \def\fp@tmp@single{single}%
+  \def\fp@tmp@king{king}%
+  \ifx\fp@bedtype\fp@tmp@single
+    \def\fp@bedw{0.9}%
+  \else\ifx\fp@bedtype\fp@tmp@king
+    \def\fp@bedw{1.8}%
+  \else
+    \def\fp@bedw{1.4}%
+  \fi\fi
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@bedcolor, thick] (0,0) rectangle (\fp@bedw,2.0);%
+    \ifx\fp@bedtype\fp@tmp@single
+      \draw[\fp@bedcolor, thin, rounded corners=0.03cm]
+        (0.1,1.65) rectangle (0.8,1.9);%
+    \else
+      \draw[\fp@bedcolor, thin, rounded corners=0.03cm]
+        (0.1,1.65) rectangle (\fp@bedw/2-0.05,1.9);%
+      \draw[\fp@bedcolor, thin, rounded corners=0.03cm]
+        (\fp@bedw/2+0.05,1.65) rectangle (\fp@bedw-0.1,1.9);%
+    \fi
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floortable}
+% Table (rectangular or round).
+%    \begin{macrocode}
+\define@key{floortable}{shape}{\def\fp@tableshape{#1}}
+\define@key{floortable}{color}{\def\fp@tablecolor{#1}}
+
+\newcommand{\floortable}[4][]{%
+  \begingroup
+  \def\fp@tableshape{rectangular}%
+  \def\fp@tablecolor{fp@furncolor}%
+  \setkeys{floortable}{#1}%
+  \def\fp@tmp@round{round}%
+  \ifx\fp@tableshape\fp@tmp@round
+    \draw[\fp@tablecolor, thick] (#2) circle (#3/2);%
+  \else
+    \draw[\fp@tablecolor, thick] (#2) rectangle ++(#3,#4);%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorchair}
+% Chair (seat square + backrest).
+%    \begin{macrocode}
+\define@key{floorchair}{color}{\def\fp@chaircolor{#1}}
+
+\newcommand{\floorchair}[3][]{%
+  \begingroup
+  \def\fp@chaircolor{fp@furncolor}%
+  \setkeys{floorchair}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@chaircolor, thick] (0,0) rectangle (0.45,0.45);%
+    \draw[\fp@chaircolor, thick] (0,0.45) -- (0,0.55) -- (0.45,0.55) -- (0.45,0.45);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorsofa}
+% Sofa with armrests.
+%    \begin{macrocode}
+\define@key{floorsofa}{seats}{\def\fp@sofaseats{#1}}
+\define@key{floorsofa}{color}{\def\fp@sofacolor{#1}}
+
+\newcommand{\floorsofa}[3][]{%
+  \begingroup
+  \def\fp@sofaseats{3}%
+  \def\fp@sofacolor{fp@furncolor}%
+  \setkeys{floorsofa}{#1}%
+  \pgfmathsetmacro{\fp@sofaw}{\fp@sofaseats * 0.55 + 0.2}%
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@sofacolor, thick] (0,0) rectangle (\fp@sofaw,0.6);%
+    \draw[\fp@sofacolor, thick] (0,0.6) rectangle (\fp@sofaw,0.8);%
+    \draw[\fp@sofacolor, thin] (0,0) rectangle (0.1,0.6);%
+    \pgfmathsetmacro{\fp@armright}{\fp@sofaw - 0.1}%
+    \draw[\fp@sofacolor, thin] (\fp@armright,0) rectangle (\fp@sofaw,0.6);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorstove}
+% Stove/cooktop with 4 burner circles.
+%    \begin{macrocode}
+\define@key{floorstove}{color}{\def\fp@stovecolor{#1}}
+
+\newcommand{\floorstove}[3][]{%
+  \begingroup
+  \def\fp@stovecolor{fp@furncolor}%
+  \setkeys{floorstove}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@stovecolor, thick] (0,0) rectangle (0.6,0.6);%
+    \draw[\fp@stovecolor, thin] (0.18,0.18) circle (0.08);%
+    \draw[\fp@stovecolor, thin] (0.42,0.18) circle (0.08);%
+    \draw[\fp@stovecolor, thin] (0.18,0.42) circle (0.10);%
+    \draw[\fp@stovecolor, thin] (0.42,0.42) circle (0.10);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorfridge}
+% Refrigerator with door division.
+%    \begin{macrocode}
+\define@key{floorfridge}{color}{\def\fp@fridgecolor{#1}}
+
+\newcommand{\floorfridge}[3][]{%
+  \begingroup
+  \def\fp@fridgecolor{fp@furncolor}%
+  \setkeys{floorfridge}{#1}%
+  \begin{scope}[shift={(#2)}, rotate=#3]
+    \draw[\fp@fridgecolor, thick] (0,0) rectangle (0.6,0.7);%
+    \draw[\fp@fridgecolor, thin] (0,0.45) -- (0.6,0.45);%
+  \end{scope}
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordesk}
+% Desk with dashed chair arc.
+%    \begin{macrocode}
+\define@key{floordesk}{color}{\def\fp@deskcolor{#1}}
+
+\newcommand{\floordesk}[4][]{%
+  \begingroup
+  \def\fp@deskcolor{fp@furncolor}%
+  \setkeys{floordesk}{#1}%
+  \draw[\fp@deskcolor, thick] (#2) rectangle ++(#3,#4);%
+  \pgfmathsetmacro{\fp@deskarcx}{#3/2}%
+  \draw[\fp@deskcolor, thin, dashed]
+    ($(#2)+(0.1,0)$) arc[start angle=180, end angle=0, x radius=\fp@deskarcx-0.1, y radius=0.3];%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorshelving}
+% Shelving unit with 3 shelf lines.
+%    \begin{macrocode}
+\define@key{floorshelving}{color}{\def\fp@shelvcolor{#1}}
+
+\newcommand{\floorshelving}[4][]{%
+  \begingroup
+  \def\fp@shelvcolor{fp@furncolor}%
+  \setkeys{floorshelving}{#1}%
+  \draw[\fp@shelvcolor, thick] (#2) rectangle ++(#3,#4);%
+  \pgfmathsetmacro{\fp@shelfstep}{#4/4}%
+  \foreach \i in {1,2,3} {%
+    \pgfmathsetmacro{\fp@shelfy}{\i*\fp@shelfstep}%
+    \draw[\fp@shelvcolor, thin] ($(#2)+(0,\fp@shelfy)$) -- ++(#3,0);%
+  }%
+  \endgroup
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</furniture>
+%
+% \subsection{plankton-site}
+%
+%    \begin{macrocode}
+%<*site>
+% plankton-site.sty — Site plan elements for TikZ floor plans
+% Provides: vegetation, hardscape, water features, utilities, site boundaries
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{plankton-site}[2024/01/01 Plankton site plan elements]
+
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+
+\usetikzlibrary{calc,patterns,decorations.markings,decorations.pathmorphing,arrows.meta}
+
+%% ============================================================
+%% Configuration
+%% ============================================================
+\definecolor{fp@sitecolor}{RGB}{34,102,34}% dark forest green
+\definecolor{fp@sitefill}{RGB}{34,102,34}% same as sitecolor, used for tinted fills
+\colorlet{fp@sitelightfill}{fp@sitecolor!25}%
+\colorlet{fp@siteverylightfill}{fp@sitecolor!15}%
+\definecolor{fp@walkcolor}{RGB}{153,153,153}% gray for walkways
+\definecolor{fp@walkfill}{RGB}{220,220,220}% light gray for walkway fill
+
+%% ============================================================
+%% VEGETATION
+%% ============================================================
+
+%% ------------------------------------------------------------
+%% Tree (plan view)
+%% ------------------------------------------------------------
+%    \end{macrocode}
+%
+% \begin{macro}{\floortree}
+% Tree in plan view: deciduous, coniferous, or palm.
+%    \begin{macrocode}
+\define@key{floortree}{type}{\def\fp@treetype{#1}}
+\define@key{floortree}{color}{\def\fp@treecolor{#1}}
+
+\newcommand{\floortree}[3][]{%
+  \begingroup
+  \def\fp@treetype{deciduous}%
+  \def\fp@treecolor{fp@sitecolor}%
+  \setkeys{floortree}{#1}%
+  \def\fp@tmp@coniferous{coniferous}%
+  \def\fp@tmp@palm{palm}%
+  \ifx\fp@treetype\fp@tmp@coniferous
+    \fill[\fp@treecolor, opacity=0.2] (#2) circle (#3);%
+    \draw[\fp@treecolor, thick] (#2) circle (#3);%
+    \foreach \a in {0,60,120} {%
+      \draw[\fp@treecolor, thin]
+        ($(#2)+(\a:#3*0.8)$) -- ($(#2)+(\a+180:#3*0.8)$);%
+    }%
+  \else\ifx\fp@treetype\fp@tmp@palm
+    \fill[\fp@treecolor, opacity=0.15] (#2) circle (#3);%
+    \draw[\fp@treecolor, thick] (#2) circle (#3);%
+    \foreach \a in {0,45,...,315} {%
+      \draw[\fp@treecolor, thin]
+        ($(#2)+(\a:#3*0.2)$) .. controls ($(#2)+(\a+15:#3*0.6)$) .. ($(#2)+(\a:#3*0.9)$);%
+    }%
+  \else
+    \fill[\fp@treecolor, opacity=0.25] (#2) circle (#3);%
+    \draw[\fp@treecolor, thick] (#2) circle (#3);%
+    \foreach \a in {0,30,...,330} {%
+      \pgfmathsetmacro{\fp@scr}{#3*0.85 + #3*0.15*rnd}%
+      \draw[\fp@treecolor, thin]
+        ($(#2)+(\a:\fp@scr)$) arc[start angle=\a, end angle=\a+30, radius=\fp@scr];%
+    }%
+    \fill[\fp@treecolor] (#2) circle (#3*0.1);%
+  \fi\fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorshrub}
+% Shrub with scalloped edge.
+%    \begin{macrocode}
+\define@key{floorshrub}{color}{\def\fp@shrubcolor{#1}}
+
+\newcommand{\floorshrub}[3][]{%
+  \begingroup
+  \def\fp@shrubcolor{fp@sitecolor}%
+  \setkeys{floorshrub}{#1}%
+  \fill[\fp@shrubcolor, opacity=0.3] (#2) circle (#3);%
+  \foreach \a in {0,40,...,320} {%
+    \draw[\fp@shrubcolor, thick]
+      ($(#2)+(\a:#3)$) arc[start angle=\a, end angle=\a+40, radius=#3];%
+    \fill[\fp@shrubcolor, opacity=0.3]
+      ($(#2)+(\a:#3*0.7)$) circle (#3*0.35);%
+  }%
+  \draw[\fp@shrubcolor, thick] (#2) circle (#3);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorhedge}
+% Hedge with wavy edges.
+%    \begin{macrocode}
+\define@key{floorhedge}{color}{\def\fp@hedgecolor{#1}}
+\define@key{floorhedge}{width}{\def\fp@hedgewidth{#1}}
+
+\newcommand{\floorhedge}[3][]{%
+  \begingroup
+  \def\fp@hedgecolor{fp@sitecolor}%
+  \def\fp@hedgewidth{0.3}%
+  \setkeys{floorhedge}{#1}%
+  \draw[\fp@hedgecolor, line width=\fp@hedgewidth cm, line cap=round,
+        double=fp@sitelightfill, double distance=\fp@hedgewidth cm]
+    (#2) -- (#3);%
+  \pgfmathsetmacro{\fp@hw}{\fp@hedgewidth/2}%
+  \draw[\fp@hedgecolor, thick,
+        decorate, decoration={snake, segment length=0.2cm, amplitude=0.04cm}]
+    ($(#2)!\fp@hw cm!90:(#3)$) -- ($(#3)!\fp@hw cm!-90:(#2)$);%
+  \draw[\fp@hedgecolor, thick,
+        decorate, decoration={snake, segment length=0.2cm, amplitude=0.04cm}]
+    ($(#2)!\fp@hw cm!-90:(#3)$) -- ($(#3)!\fp@hw cm!90:(#2)$);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorlawn}
+% Lawn area (filled polygon).
+%    \begin{macrocode}
+\define@key{floorlawn}{color}{\def\fp@lawncolor{#1}}
+\define@key{floorlawn}{opacity}{\def\fp@lawnopacity{#1}}
+
+\newcommand{\floorlawn}[2][]{%
+  \begingroup
+  \def\fp@lawncolor{green!40!white}%
+  \def\fp@lawnopacity{0.3}%
+  \setkeys{floorlawn}{#1}%
+  \fill[\fp@lawncolor, opacity=\fp@lawnopacity] #2 -- cycle;%
+  \draw[fp@sitecolor, thin, opacity=0.4] #2 -- cycle;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorgardenbed}
+% Garden/planting bed.
+%    \begin{macrocode}
+\define@key{floorgardenbed}{color}{\def\fp@gardenbedcolor{#1}}
+\define@key{floorgardenbed}{opacity}{\def\fp@gardenbedopacity{#1}}
+
+\newcommand{\floorgardenbed}[2][]{%
+  \begingroup
+  \def\fp@gardenbedcolor{brown!40!white}%
+  \def\fp@gardenbedopacity{0.4}%
+  \setkeys{floorgardenbed}{#1}%
+  \fill[\fp@gardenbedcolor, opacity=\fp@gardenbedopacity] #2 -- cycle;%
+  \draw[brown!50!black, thin] #2 -- cycle;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%% ============================================================
+%% HARDSCAPE
+%% ============================================================
+%
+% \begin{macro}{\floorpatio}
+% Patio with material textures.
+%    \begin{macrocode}
+\define@key{floorpatio}{color}{\def\fp@patiocolor{#1}}
+\define@key{floorpatio}{material}{\def\fp@patiomaterial{#1}}
+
+\newcommand{\floorpatio}[4][]{%
+  \begingroup
+  \def\fp@patiocolor{gray}%
+  \def\fp@patiomaterial{concrete}%
+  \setkeys{floorpatio}{#1}%
+  \def\fp@tmp@wood{wood}%
+  \def\fp@tmp@stone{stone}%
+  \ifx\fp@patiomaterial\fp@tmp@wood
+    \fill[brown!15] (#2) rectangle ++(#3,#4);%
+    \draw[brown!50!black, thin] (#2) rectangle ++(#3,#4);%
+    \pgfmathsetmacro{\fp@deckstep}{0.15}%
+    \pgfmathtruncatemacro{\fp@deckcount}{#4/\fp@deckstep}%
+    \foreach \i in {1,...,\fp@deckcount} {%
+      \pgfmathsetmacro{\fp@dy}{\i*\fp@deckstep}%
+      \draw[brown!50!black, very thin] ($(#2)+(0,\fp@dy)$) -- ++(#3,0);%
+    }%
+  \else\ifx\fp@patiomaterial\fp@tmp@stone
+    \fill[\fp@patiocolor!15] (#2) rectangle ++(#3,#4);%
+    \draw[gray!60, thin] (#2) rectangle ++(#3,#4);%
+    \pgfmathsetmacro{\fp@sx}{#3/3}%
+    \pgfmathsetmacro{\fp@sy}{#4/3}%
+    \foreach \i in {1,2} {%
+      \pgfmathsetmacro{\fp@dx}{\i*\fp@sx}%
+      \draw[gray!60, very thin] ($(#2)+(\fp@dx,0)$) -- ++(0,#4);%
+    }%
+    \foreach \j in {1,2} {%
+      \pgfmathsetmacro{\fp@dy}{\j*\fp@sy}%
+      \draw[gray!60, very thin] ($(#2)+(0,\fp@dy)$) -- ++(#3,0);%
+    }%
+  \else
+    \fill[\fp@patiocolor!15] (#2) rectangle ++(#3,#4);%
+    \draw[gray!60, thin] (#2) rectangle ++(#3,#4);%
+  \fi\fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorpathwalk}
+% Walkway (double-line path).
+%    \begin{macrocode}
+\define@key{floorpathwalk}{color}{\def\fp@pathcolor{#1}}
+\define@key{floorpathwalk}{width}{\def\fp@pathwidth{#1}}
+
+\newcommand{\floorpathwalk}[2][]{%
+  \begingroup
+  \def\fp@pathcolor{fp@walkcolor}%
+  \def\fp@pathwidth{0.8}%
+  \setkeys{floorpathwalk}{#1}%
+  \draw[\fp@pathcolor, double=fp@walkfill, double distance=\fp@pathwidth cm,
+        line width=0.4pt, line cap=round, line join=round]
+    #2;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floordriveway}
+% Driveway (filled rectangle).
+%    \begin{macrocode}
+\define@key{floordriveway}{color}{\def\fp@drivewaycolor{#1}}
+
+\newcommand{\floordriveway}[4][]{%
+  \begingroup
+  \def\fp@drivewaycolor{gray!35}%
+  \setkeys{floordriveway}{#1}%
+  \fill[\fp@drivewaycolor] (#2) rectangle ++(#3,#4);%
+  \draw[gray!60, thin] (#2) rectangle ++(#3,#4);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorfence}
+% Fence: wood, chain-link, or wall.
+%    \begin{macrocode}
+\define@key{floorfence}{type}{\def\fp@fencetype{#1}}
+\define@key{floorfence}{color}{\def\fp@fencecolor{#1}}
+
+\newcommand{\floorfence}[3][]{%
+  \begingroup
+  \def\fp@fencetype{wood}%
+  \def\fp@fencecolor{brown!60!black}%
+  \setkeys{floorfence}{#1}%
+  \def\fp@tmp@chain{chain}%
+  \def\fp@tmp@wall{wall}%
+  \ifx\fp@fencetype\fp@tmp@chain
+    \draw[\fp@fencecolor, thick,
+          decorate, decoration={zigzag, segment length=0.15cm, amplitude=0.06cm}]
+      (#2) -- (#3);%
+  \else\ifx\fp@fencetype\fp@tmp@wall
+    \draw[\fp@fencecolor, line width=2pt] (#2) -- (#3);%
+  \else
+    \draw[\fp@fencecolor, thick,
+          postaction={decorate, decoration={markings,
+            mark=between positions 0 and 1 step 0.15cm with {%
+              \draw[\fp@fencecolor, thin] (0,-0.06) -- (0,0.06);%
+            }%
+          }}]
+      (#2) -- (#3);%
+  \fi\fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorretaining}
+% Retaining wall with hatch marks.
+%    \begin{macrocode}
+\define@key{floorretaining}{color}{\def\fp@retaincolor{#1}}
+
+\newcommand{\floorretaining}[3][]{%
+  \begingroup
+  \def\fp@retaincolor{gray!70!black}%
+  \setkeys{floorretaining}{#1}%
+  \draw[\fp@retaincolor, line width=1.5pt] (#2) -- (#3);%
+  \draw[\fp@retaincolor, thin,
+        postaction={decorate, decoration={markings,
+          mark=between positions 0 and 1 step 0.2cm with {%
+            \draw[\fp@retaincolor, thin] (0,0) -- (0.08,-0.08);%
+          }%
+        }}]
+    (#2) -- (#3);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%% ============================================================
+%% WATER FEATURES
+%% ============================================================
+%
+% \begin{macro}{\floorpool}
+% Swimming pool (blue rounded rectangle).
+%    \begin{macrocode}
+\define@key{floorpool}{color}{\def\fp@poolcolor{#1}}
+
+\newcommand{\floorpool}[4][]{%
+  \begingroup
+  \def\fp@poolcolor{cyan!40}%
+  \setkeys{floorpool}{#1}%
+  \fill[\fp@poolcolor, rounded corners=0.3cm] (#2) rectangle ++(#3,#4);%
+  \draw[cyan!60!black, thick, rounded corners=0.3cm] (#2) rectangle ++(#3,#4);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorpond}
+% Freeform pond (blue filled polygon).
+%    \begin{macrocode}
+\define@key{floorpond}{color}{\def\fp@pondcolor{#1}}
+
+\newcommand{\floorpond}[2][]{%
+  \begingroup
+  \def\fp@pondcolor{cyan!30}%
+  \setkeys{floorpond}{#1}%
+  \fill[\fp@pondcolor] #2 -- cycle;%
+  \draw[cyan!60!black, thick] #2 -- cycle;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%% ============================================================
+%% UTILITIES
+%% ============================================================
+%
+% \begin{macro}{\floorsiteutility}
+% Utility line with inline type label.
+%    \begin{macrocode}
+\define@key{floorsiteutility}{type}{\def\fp@utiltype{#1}}
+\define@key{floorsiteutility}{color}{\def\fp@utilcolor{#1}}
+
+\newcommand{\floorsiteutility}[2][]{%
+  \begingroup
+  \def\fp@utiltype{water}%
+  \def\fp@utilcolor{}%
+  \setkeys{floorsiteutility}{#1}%
+  \def\fp@tmp@sewer{sewer}%
+  \def\fp@tmp@gas{gas}%
+  \def\fp@tmp@electric{electric}%
+  \ifx\fp@utiltype\fp@tmp@sewer
+    \ifx\fp@utilcolor\empty \def\fp@utilcolor{brown!60!black}\fi
+    \def\fp@utillabel{S}%
+    \def\fp@utildash{dash dot}%
+  \else\ifx\fp@utiltype\fp@tmp@gas
+    \ifx\fp@utilcolor\empty \def\fp@utilcolor{yellow!70!black}\fi
+    \def\fp@utillabel{G}%
+    \def\fp@utildash{dashed}%
+  \else\ifx\fp@utiltype\fp@tmp@electric
+    \ifx\fp@utilcolor\empty \def\fp@utilcolor{red!70!black}\fi
+    \def\fp@utillabel{E}%
+    \def\fp@utildash{dashed}%
+  \else
+    \ifx\fp@utilcolor\empty \def\fp@utilcolor{blue!70!black}\fi
+    \def\fp@utillabel{W}%
+    \def\fp@utildash{dashed}%
+  \fi\fi\fi
+  \draw[\fp@utilcolor, thick, \fp@utildash,
+        postaction={decorate, decoration={markings,
+          mark=at position 0.3 with {%
+            \node[fill=white, inner sep=1pt, font=\tiny\bfseries, text=\fp@utilcolor]
+              {\fp@utillabel};%
+          },
+          mark=at position 0.7 with {%
+            \node[fill=white, inner sep=1pt, font=\tiny\bfseries, text=\fp@utilcolor]
+              {\fp@utillabel};%
+          }%
+        }}]
+    #2;%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorutilitypole}
+% Utility pole (filled circle with crossbar).
+%    \begin{macrocode}
+\define@key{floorutilitypole}{color}{\def\fp@polecolor{#1}}
+
+\newcommand{\floorutilitypole}[2][]{%
+  \begingroup
+  \def\fp@polecolor{gray!70!black}%
+  \setkeys{floorutilitypole}{#1}%
+  \fill[\fp@polecolor] (#2) circle (0.08);%
+  \draw[\fp@polecolor, thick] ($(#2)+(-0.15,0)$) -- ($(#2)+(0.15,0)$);%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%% ============================================================
+%% SITE BOUNDARIES
+%% ============================================================
+%
+% \begin{macro}{\floorproperty}
+% Property boundary (dash-dot line).
+%    \begin{macrocode}
+\define@key{floorproperty}{color}{\def\fp@propcolor{#1}}
+\define@key{floorproperty}{label}{\def\fp@proplabel{#1}}
+
+\newcommand{\floorproperty}[2][]{%
+  \begingroup
+  \def\fp@propcolor{black}%
+  \def\fp@proplabel{}%
+  \setkeys{floorproperty}{#1}%
+  \draw[\fp@propcolor, thick, dash dot] #2;%
+  \ifx\fp@proplabel\empty\else
+    \draw[\fp@propcolor, thick, dash dot,
+          postaction={decorate, decoration={markings,
+            mark=at position 0.5 with {%
+              \node[fill=white, inner sep=1pt, font=\tiny, text=\fp@propcolor]
+                {\fp@proplabel};%
+            }%
+          }}]
+      #2;%
+  \fi
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\floorsetback}
+% Building setback line (dashed).
+%    \begin{macrocode}
+\define@key{floorsetback}{color}{\def\fp@setbackcolor{#1}}
+\define@key{floorsetback}{offset}{\def\fp@setbackoffset{#1}}
+
+\newcommand{\floorsetback}[2][]{%
+  \begingroup
+  \def\fp@setbackcolor{red!50!black}%
+  \def\fp@setbackoffset{0}%
+  \setkeys{floorsetback}{#1}%
+  \draw[\fp@setbackcolor, thin, densely dashed] #2;%
+  \endgroup
+}
+
+%    \end{macrocode}
+% \end{macro}
+%</site>
+%
+% \Finale

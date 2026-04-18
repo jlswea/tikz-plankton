@@ -1,0 +1,48 @@
+%%
+%% Copyright (C) 2024-2026 Julius Volland
+%%
+%% This file is part of the plankton package.
+%% It may be distributed and/or modified under the conditions of the
+%% LaTeX Project Public License (LPPL), version 1.3c or later.
+%%
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+
+plankton -- TikZ macros for architectural floor plans and site plans
+Copyright (C) 2024-2026 Julius Volland
+
+This work may be distributed and/or modified under the conditions
+of the LaTeX Project Public License, version 1.3c or later.
+The latest version of this license is in
+  https://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2008-05-04 or later.
+
+This work has the LPPL maintenance status "maintained".
+The Current Maintainer of this work is Julius Volland.
+
+\endpreamble
+\generate{
+  \file{plankton-base.sty}{\from{plankton.dtx}{base}}
+  \file{plankton-electrical.sty}{\from{plankton.dtx}{electrical}}
+  \file{plankton-plumbing.sty}{\from{plankton.dtx}{plumbing}}
+  \file{plankton-hvac.sty}{\from{plankton.dtx}{hvac}}
+  \file{plankton-furniture.sty}{\from{plankton.dtx}{furniture}}
+  \file{plankton-site.sty}{\from{plankton.dtx}{site}}
+}
+\obeyspaces
+\Msg{*****************************************************}
+\Msg{*                                                   *}
+\Msg{* To finish the installation, move all .sty files   *}
+\Msg{* into a directory searched by TeX, e.g.            *}
+\Msg{*   texmf-local/tex/latex/plankton/                 *}
+\Msg{*                                                   *}
+\Msg{* To produce the documentation, run                 *}
+\Msg{*   pdflatex plankton.dtx                           *}
+\Msg{*                                                   *}
+\Msg{* Happy typesetting!                                *}
+\Msg{*                                                   *}
+\Msg{*****************************************************}
+\endbatchfile
