@@ -2,6 +2,8 @@
 
 TikZ macros for architectural floor plans and site plans.
 
+**[Live showcase](https://jlswea.github.io/tikz-plankton/)** with SVG previews of all examples.
+
 ## What it is
 
 **plankton** is a collection of six LaTeX/TikZ packages for drawing
@@ -43,17 +45,17 @@ Copy the six `.sty` files to a directory in your TeX search path
 \begin{document}
 \begin{tikzpicture}[x=1cm, y=1cm]
   % Walls
-  \floorwall{0,0}{6,0}
-  \floorwall{6,0}{6,4}
-  \floorwall{6,4}{0,4}
-  \floorwall{0,4}{0,0}
+  \planwall{0,0}{6,0}
+  \planwall{6,0}{6,4}
+  \planwall{6,4}{0,4}
+  \planwall{0,4}{0,0}
 
   % Door and window
-  \floordoor{1,0}{0}
-  \floorwindow{2,4}{4,4}
+  \plandoor{1,0}{0}
+  \planwindow{2,4}{4,4}
 
   % Label
-  \floorlabel{3,2}{Room}
+  \planlabel{3,2}{Room}
 \end{tikzpicture}
 \end{document}
 ```
@@ -84,6 +86,7 @@ make sty        # extract .sty files
 make doc        # build documentation PDF
 make examples   # compile all example PDFs
 make all        # all of the above
+make svgs       # generate SVG previews in docs/img/
 make ctan       # create plankton.zip for CTAN upload
 make clean      # remove generated files
 ```

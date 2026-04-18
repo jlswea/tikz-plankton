@@ -4,6 +4,20 @@ All notable changes to the plankton TikZ library will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-04-18
+
+### Changed
+- Renamed all user-facing macros from `\floor*` to `\plan*`
+  (e.g. `\floorwall` is now `\planwall`).
+- Renamed internal macro prefix from `\fp@*` to `\plan@*`
+  (e.g. `\fp@wallthickness` is now `\plan@wallthickness`).
+- Key families renamed accordingly (`floorwall` -> `planwall`, etc.).
+
+### Added
+- Showcase site (`docs/index.html`) with SVG previews of all examples.
+- GitHub Actions CI workflow (`.github/workflows/ci.yml`).
+- `make svgs` target for generating SVG previews via dvisvgm.
+
 ## [0.1.0] - 2026-04-18
 
 ### Added
