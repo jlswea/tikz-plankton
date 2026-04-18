@@ -1,0 +1,132 @@
+\documentclass[border=1cm]{standalone}
+\usepackage[units=metric]{plankton-base}
+\usepackage[standard=iec]{plankton-electrical}
+\usepackage[standard=iso]{plankton-plumbing}
+\usepackage[standard=iec]{plankton-hvac}
+\usepackage{plankton-furniture}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+
+%% ============================================================
+%% Layer: Base / Architectural (IEC/ISO style)
+%% ============================================================
+\begin{scope}
+  % Outer walls
+  \floorwall{0,0}{8,0}
+  \floorwall{8,0}{8,6}
+  \floorwall{8,6}{0,6}
+  \floorwall{0,6}{0,0}
+
+  % Interior walls
+  \floorwall{4,0}{4,4}       % Living/bedroom divider
+  \floorwall{4,4}{8,4}       % Bedroom/bathroom divider
+  \floorwall{6,4}{6,6}       % Kitchen/bathroom divider
+
+  % Doors
+  \floordoor{4,1}{0}                          % Bedroom door
+  \floordoor[hinge=right]{4,4.2}{90}          % Hallway door
+  \floordoor{6.2,4}{0}                        % Bathroom door
+  \floordoor[width=1.2]{1,0}{0}               % Front door
+
+  % Windows (ISO: single line with ticks)
+  \floorwindow{5,0}{7,0}    % Bedroom window
+  \floorwindow{1,6}{3,6}    % Living room window
+  \floorwindow{8,1}{8,3}    % Bedroom side window
+
+  % Room labels
+  \floorlabel{2,3}{Living Room}
+  \floorlabel{6,2}{Bedroom}
+  \floorlabel{7,5}{Bathroom}
+  \floorlabel{3,5}{Kitchen}
+
+  % Dimensions (ISO: oblique ticks, mm labels)
+  \floordimension[offset=0.7]{0,0}{8,0}
+  \floordimension[offset=0.7]{8,0}{8,6}
+
+  % Scale indicator
+  \floorscale{0,-1.2}
+\end{scope}
+
+%% ============================================================
+%% Layer: Electrical (IEC style)
+%% ============================================================
+\begin{scope}
+  % Living room
+  \flooroutlet{0.2,1}{0}
+  \flooroutlet{0.2,4}{0}
+  \floorlight{2,3}{0}
+  \floorswitch{3.8,0.3}{0}
+
+  % Bedroom
+  \flooroutlet{7.8,0.3}{180}
+  \flooroutlet{4.2,0.3}{0}
+  \floorlight{6,2}{0}
+  \floorswitch{4.2,1.2}{0}
+
+  % Kitchen
+  \floorlight{3,5}{0}
+  \flooroutlet{0.2,5.5}{0}
+  \floorswitch{3.8,4.3}{0}
+
+  % Bathroom
+  \floorlight{7,5}{0}
+  \floorswitch{6.2,4.3}{0}
+\end{scope}
+
+%% ============================================================
+%% Layer: Plumbing (ISO style)
+%% ============================================================
+\begin{scope}
+  % Kitchen
+  \floorsink[type=kitchen]{1.5,5.8}{180}
+
+  % Bathroom
+  \floortoilet{7.5,4.5}{0}
+  \floorsink{6.5,5.8}{180}
+  \floortub{6.2,4.2}{0.6}{1.5}
+
+  % Supply lines (ISO: solid colored with labels)
+  \floorsupplyline[type=cold]{(1.5,6) -- (1.5,5.5)}
+  \floorsupplyline[type=cold]{(6.5,6) -- (6.5,5.5)}
+
+  % Drain lines
+  \floordrainline{(1.5,5.5) -- (1.5,4.5) -- (6.5,4.5)}
+  \floordrainline{(7.5,4.5) -- (7.5,4.3) -- (6.5,4.3)}
+\end{scope}
+
+%% ============================================================
+%% Layer: HVAC (IEC style)
+%% ============================================================
+\begin{scope}
+  % Living room thermostat (on wall)
+  \floorthermostat{3.7,2.5}{0}
+
+  % Supply diffusers
+  \floordiffuser[type=supply]{2,2}{0}      % Living room
+  \floordiffuser[type=supply]{6,1.5}{0}    % Bedroom
+
+  % Exhaust fan in bathroom
+  \floorexhaust{7.5,5.5}{0}
+\end{scope}
+
+%% ============================================================
+%% Layer: Furniture
+%% ============================================================
+\begin{scope}
+  % Bedroom — double bed
+  \floorbed[type=double]{4.3,0.3}{0}
+
+  % Living room — sofa
+  \floorsofa[seats=3]{0.2,1.5}{0}
+
+  % Kitchen — stove and fridge
+  \floorstove{4.5,5.3}{0}
+  \floorfridge{5.2,5.3}{0}
+
+  % Living room — table
+  \floortable[shape=round]{2,1.5}{0.8}{0.8}
+\end{scope}
+
+\end{tikzpicture}
+\end{document}
