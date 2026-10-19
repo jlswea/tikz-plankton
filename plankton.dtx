@@ -189,7 +189,9 @@
 % Draws a dimension line with auto-calculated label.
 % Metric: oblique tick terminators, millimetre label.
 % Imperial: arrow terminators, feet-inches label.
-% Options: |offset| (default |0.5|), |label| (override auto-label),
+% Options: |offset| (distance of the dimension line from the measured
+% points, in plan units or with an explicit unit such as |3mm|;
+% default |0.5|), |label| (override auto-label),
 % |position| (|above| or |below|).
 %
 % \DescribeMacro{\planscale}
@@ -743,8 +745,14 @@
   \def\plan@dimlabel{}%
   \def\plan@dimpos{above}%
   \setkeys{plandim}{#1}%
-  \coordinate (plan@dimA) at ($(#2)!\plan@dimoffset!90:(#3)$);%
-  \coordinate (plan@dimB) at ($(#3)!\plan@dimoffset!-90:(#2)$);%
+  \pgfmathparse{\plan@dimoffset}%
+  \ifpgfmathunitsdeclared
+    \edef\plan@dimoffsetlen{\pgfmathresult pt}%
+  \else
+    \edef\plan@dimoffsetlen{\pgfmathresult cm}%
+  \fi
+  \coordinate (plan@dimA) at ($(#2)!\plan@dimoffsetlen!90:(#3)$);%
+  \coordinate (plan@dimB) at ($(#3)!\plan@dimoffsetlen!-90:(#2)$);%
   \draw[thin, gray] (#2) -- (plan@dimA);%
   \draw[thin, gray] (#3) -- (plan@dimB);%
   \ifplan@imperial

@@ -5,7 +5,7 @@ EXAMPLES = $(wildcard examples/*.tex)
 EXAMPLE_PDFS = $(EXAMPLES:.tex=.pdf)
 EXAMPLE_SVGS = $(patsubst examples/%.tex,docs/img/%.svg,$(EXAMPLES))
 
-.PHONY: all sty doc examples svgs ctan clean
+.PHONY: all sty doc examples svgs test ctan clean
 
 all: sty doc examples
 
@@ -26,6 +26,13 @@ examples/%.pdf: examples/%.tex $(STY)
 	cd examples && TEXINPUTS=".:..:" pdflatex -interaction=nonstopmode \
 	  -halt-on-error $(<F)
 
+test: $(STY)
+	cd tests && for t in *.tex; do \
+	  TEXINPUTS=".:..:" pdflatex -interaction=nonstopmode \
+	    -halt-on-error $$t > /dev/null || { echo "FAIL: $$t"; exit 1; }; \
+	  echo "PASS: $$t"; \
+	done
+
 svgs: $(EXAMPLE_SVGS)
 docs/img/%.svg: examples/%.pdf
 	@mkdir -p docs/img
@@ -43,3 +50,4 @@ clean:
 	rm -f $(STY) *.aux *.log *.idx *.ind *.ilg *.gls *.glo *.glg \
 	  *.toc *.out *.hd *.pdf
 	rm -f examples/*.aux examples/*.log examples/*.pdf
+	rm -f tests/*.aux tests/*.log tests/*.pdf

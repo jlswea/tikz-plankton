@@ -1,0 +1,46 @@
+\documentclass[border=5mm]{standalone}
+\usepackage{plankton-base}
+
+\makeatletter
+% \assertat{<node>}{<x cm>}{<y cm>}: fail the run unless the node centre
+% lies within 0.01 cm of the expected position.
+\newcommand{\assertat}[3]{%
+  \pgfpointanchor{#1}{center}%
+  \pgfmathsetmacro{\t@x}{\pgf@x/1cm}%
+  \pgfmathsetmacro{\t@y}{\pgf@y/1cm}%
+  \pgfmathparse{abs(\t@x-(#2)) < 0.01 && abs(\t@y-(#3)) < 0.01}%
+  \ifdim\pgfmathresult pt=0pt
+    \errmessage{Assertion failed: #1 at (\t@x,\t@y), expected (#2,#3)}%
+  \fi
+}
+\makeatother
+
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+  % Offset is a distance, independent of the measured length.
+  \plandimension[offset=0.7]{0,0}{8,0}
+  \assertat{plan@dimA}{0}{0.7}
+  \assertat{plan@dimB}{8}{0.7}
+
+  \plandimension[offset=0.7]{0,-3}{2,-3}
+  \assertat{plan@dimA}{0}{-2.3}
+  \assertat{plan@dimB}{2}{-2.3}
+
+  % Negative offsets go to the other side.
+  \plandimension[offset=-0.7]{0,-5}{12,-5}
+  \assertat{plan@dimA}{0}{-5.7}
+
+  % Vertical dimension.
+  \plandimension[offset=0.7]{10,0}{10,6}
+  \assertat{plan@dimA}{9.3}{0}
+  \assertat{plan@dimB}{9.3}{6}
+
+  % Explicit units are honoured.
+  \plandimension[offset=-3mm]{0,-8}{4,-8}
+  \assertat{plan@dimA}{0}{-8.3}
+
+  % Default offset is 0.5.
+  \plandimension{0,-10}{6,-10}
+  \assertat{plan@dimA}{0}{-9.5}
+\end{tikzpicture}
+\end{document}
