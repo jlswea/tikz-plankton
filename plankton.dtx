@@ -160,9 +160,11 @@
 % (default |gray!5|), |opacity| (default |0.5|).
 %
 % \DescribeMacro{\planlabel}
-% |\planlabel{|\meta{x,y}|}{|\meta{text}|}|
+% |\planlabel[|\meta{node options}|]{|\meta{x,y}|}{|\meta{text}|}|
 %
-% Places a room label at the given coordinates.
+% Places a room label at the given coordinates. The font defaults to
+% |\footnotesize|; \meta{node options} are passed to the TikZ node,
+% e.g.\ |[font=\tiny]| or |[anchor=west]|.
 %
 % \DescribeMacro{\plandoor}
 % |\plandoor[|\meta{options}|]{|\meta{x,y}|}{|\meta{angle}|}|
@@ -640,8 +642,8 @@
 % \begin{macro}{\planlabel}
 % Places a room label at given coordinates.
 %    \begin{macrocode}
-\newcommand{\planlabel}[2]{%
-  \node[font=\footnotesize] at (#1) {#2};%
+\newcommand{\planlabel}[3][]{%
+  \node[font=\footnotesize, #1] at (#2) {#3};%
 }
 %    \end{macrocode}
 % \end{macro}

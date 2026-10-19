@@ -1,0 +1,33 @@
+\documentclass[border=5mm]{standalone}
+\usepackage{plankton-base}
+
+% \assertfont{<expected>}: fail the run unless the current font size
+% matches the size selected by <expected>.
+\newcommand{\assertfont}[1]{%
+  \edef\actualsize{\the\fontdimen6\font}%
+  {#1\xdef\expectedsize{\the\fontdimen6\font}}%
+  \ifx\actualsize\expectedsize\else
+    \errmessage{Assertion failed: font size \actualsize, expected \expectedsize}%
+  \fi
+}
+
+\makeatletter
+\newcommand{\assertxat}[3]{%
+  \pgfpointanchor{#1}{#2}%
+  \ifdim\pgf@x=#3\else\errmessage{Assertion failed: #1.#2 at x=\the\pgf@x, expected #3}\fi
+}
+\makeatother
+
+\begin{document}
+\begin{tikzpicture}
+  % Default stays \footnotesize.
+  \planlabel{0,0}{\assertfont{\footnotesize}Default}
+
+  % Node options override the default font.
+  \planlabel[font=\tiny]{0,-1}{\assertfont{\tiny}Tiny}
+
+  % Other node options pass through.
+  \planlabel[anchor=west, name=lbl]{0,-2}{West}
+  \assertxat{lbl}{west}{0pt}
+\end{tikzpicture}
+\end{document}
