@@ -4,6 +4,17 @@ All notable changes to the plankton TikZ library will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+- `\plandimension`: `offset` is now a distance in plan units (or an
+  explicit length such as `3mm`) instead of a fraction of the measured
+  length, so dimension lines sit at the same distance regardless of size.
+
+### Added
+- `\planlabel` accepts optional node options, e.g. `[font=\tiny]`.
+- `make test` target and regression tests in `tests/`, run in CI.
+
 ## [0.2.0] - 2026-04-18
 
 ### Changed
