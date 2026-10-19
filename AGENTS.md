@@ -18,6 +18,8 @@ tikz-plankton/
   AGENTS.md             # this file
   CHANGELOG.md
   .gitignore
+  tests/
+    *.tex               # regression tests; fail via \errmessage
   examples/
     apartment-base.tex
     apartment-iec.tex
@@ -39,6 +41,7 @@ tikz-plankton/
 make sty        # extract .sty files from .dtx via .ins
 make doc        # build plankton.pdf (3-pass pdflatex + makeindex)
 make examples   # compile all example PDFs
+make test       # run regression tests in tests/
 make all        # sty + doc + examples
 make svgs       # generate SVG previews in docs/img/
 make ctan       # create plankton.zip for CTAN upload
@@ -122,6 +125,9 @@ producing the corresponding `.sty` file.
 
 4. **Add to an example** in `examples/`.
 
+5. **Add a test** in `tests/` that asserts the behaviour and stops the
+   run with `\errmessage` on failure; check it with `make test`.
+
 ## How to add a new example
 
 1. Create `examples/my-example.tex`.
@@ -139,7 +145,7 @@ producing the corresponding `.sty` file.
 ## CI
 
 GitHub Actions runs on push/PR to `main`. Steps: `make sty` -> `make doc`
--> `make examples`. Also checks for SVG drift (warning only).
+-> `make examples` -> `make test`. Also checks for SVG drift (warning only).
 
 ## LaTeX gotchas
 

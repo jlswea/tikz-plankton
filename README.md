@@ -85,6 +85,7 @@ make doc    # or: pdflatex plankton.dtx (three passes)
 make sty        # extract .sty files
 make doc        # build documentation PDF
 make examples   # compile all example PDFs
+make test       # run regression tests
 make all        # all of the above
 make svgs       # generate SVG previews in docs/img/
 make ctan       # create plankton.zip for CTAN upload
