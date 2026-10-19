@@ -33,6 +33,9 @@ jobs:
       - name: Compile examples
         run: make examples
 
+      - name: Run tests
+        run: make test
+
       - name: Check SVG drift
         run: |
           make svgs
